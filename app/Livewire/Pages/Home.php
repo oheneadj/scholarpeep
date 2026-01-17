@@ -140,12 +140,10 @@ class Home extends Component
         $fieldsOfStudy = \App\Models\FieldOfStudy::whereNull('parent_id')->get();
         $educationLevels = \App\Models\EducationLevel::all();
 
-        // Fetch Testimonials
-        $testimonials = \App\Models\Testimonial::active()
-            ->when(true, function ($q) {
-                // Optional: Prioritize featured, then latest
-                return $q->orderBy('is_featured', 'desc')->latest();
-            })
+        // Fetch Success Stories
+        $testimonials = \App\Models\SuccessStory::approved()
+            ->featured()
+            ->latest()
             ->take(5)
             ->get();
 
