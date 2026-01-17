@@ -109,28 +109,82 @@ class ScholarshipShow extends Component
         return redirect()->away($this->scholarship->application_url);
     }
 
+    protected function applyCurrentScholarshipMatching($query)
+    {
+        $query->where(function ($q) {
+            // Match by scholarship type
+            $q->whereHas('scholarshipTypes', function ($typeQuery) {
+                $typeQuery->whereIn('scholarship_types.id', $this->scholarship->scholarshipTypes->pluck('id'));
+            })
+            // OR match by country
+            ->orWhereHas('countries', function ($countryQuery) {
+                $countryQuery->whereIn('countries.id', $this->scholarship->countries->pluck('id'));
+            })
+            // OR match by education level
+            ->orWhereHas('educationLevels', function ($levelQuery) {
+                $levelQuery->whereIn('education_levels.id', $this->scholarship->educationLevels->pluck('id'));
+            });
+        });
+    }
+
     public function render()
     {
-        // Get related scholarships based on multiple criteria
-        $similarScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
-            ->where('id', '!=', $this->scholarship->id)
-            ->where(function ($query) {
-                // Match by scholarship type
-                $query->whereHas('scholarshipTypes', function ($q) {
-                    $q->whereIn('scholarship_types.id', $this->scholarship->scholarshipTypes->pluck('id'));
-                })
-                // OR match by country
-                ->orWhereHas('countries', function ($q) {
-                    $q->whereIn('countries.id', $this->scholarship->countries->pluck('id'));
-                })
-                // OR match by education level
-                ->orWhereHas('educationLevels', function ($q) {
-                    $q->whereIn('education_levels.id', $this->scholarship->educationLevels->pluck('id'));
+        // Build related scholarships query with smart matching
+        $query = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
+            ->where('id', '!=', $this->scholarship->id);
+
+        // If user is logged in, exclude already saved scholarships and use preferences
+        if (auth()->check()) {
+            $user = auth()->user();
+            
+            // Exclude saved scholarships
+            $savedScholarshipIds = $user->savedScholarships()->pluck('scholarship_id');
+            $query->whereNotIn('id', $savedScholarshipIds);
+
+            // Load user preferences
+            $preferences = $user->preferences;
+            
+            if ($preferences) {
+                // Match by user's preferred countries, education levels, fields, or types
+                $query->where(function ($q) use ($preferences) {
+                    if ($preferences->country_ids && count($preferences->country_ids) > 0) {
+                        $q->orWhereHas('countries', function ($countryQuery) use ($preferences) {
+                            $countryQuery->whereIn('countries.id', $preferences->country_ids);
+                        });
+                    }
+                    
+                    if ($preferences->education_level_ids && count($preferences->education_level_ids) > 0) {
+                        $q->orWhereHas('educationLevels', function ($levelQuery) use ($preferences) {
+                            $levelQuery->whereIn('education_levels.id', $preferences->education_level_ids);
+                        });
+                    }
+                    
+                    if ($preferences->field_of_study_ids && count($preferences->field_of_study_ids) > 0) {
+                        $q->orWhereHas('fieldsOfStudy', function ($fieldQuery) use ($preferences) {
+                            $fieldQuery->whereIn('fields_of_study.id', $preferences->field_of_study_ids);
+                        });
+                    }
+                    
+                    if ($preferences->scholarship_type_ids && count($preferences->scholarship_type_ids) > 0) {
+                        $q->orWhereHas('scholarshipTypes', function ($typeQuery) use ($preferences) {
+                            $typeQuery->whereIn('scholarship_types.id', $preferences->scholarship_type_ids);
+                        });
+                    }
                 });
-            })
+            } else {
+                // Fallback to current scholarship's attributes if no preferences
+                $this->applyCurrentScholarshipMatching($query);
+            }
+        } else {
+            // For non-logged-in users, match by current scholarship's attributes
+            $this->applyCurrentScholarshipMatching($query);
+        }
+
+        $similarScholarships = $query
             ->with(['countries', 'educationLevels', 'scholarshipTypes'])
-            ->latest()
-            ->take(6)
+            ->orderByDesc('created_at') // Priority to new scholarships
+            ->orderByDesc('views_count') // Then by most viewed
+            ->take(3)
             ->get();
 
         $featuredScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
