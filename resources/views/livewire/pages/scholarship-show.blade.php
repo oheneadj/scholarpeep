@@ -264,7 +264,7 @@
                 />
 
                 <!-- Popular Posts -->
-                <x-widgets.popular-posts-widget :posts="$popularPosts" title="Trending Insights" />
+                {{-- <x-widgets.popular-posts-widget :posts="$popularPosts" title="Trending Insights" /> --}}
 
                 <!-- Categories -->
                 <x-widgets.topics-list :topics="$topics" title="Scholarship Types" />
@@ -273,7 +273,7 @@
                 <x-widgets.featured-scholarships-widget :scholarships="$featuredScholarships" />
 
                 <!-- Newsletter Widget -->
-                <x-widgets.newsletter-widget />
+                {{-- <x-widgets.newsletter-widget /> --}}
 
                 <!-- Sticky Ad Widget -->
                 <x-widgets.ad-widget />

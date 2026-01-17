@@ -187,6 +187,26 @@ class ScholarshipShow extends Component
             ->take(3)
             ->get();
 
+        // If we don't have 3 scholarships, fill with most viewed (excluding current and saved)
+        if ($similarScholarships->count() < 3) {
+            $excludeIds = $similarScholarships->pluck('id')->push($this->scholarship->id)->toArray();
+            
+            if (auth()->check()) {
+                $savedIds = auth()->user()->savedScholarships()->pluck('scholarship_id')->toArray();
+                $excludeIds = array_merge($excludeIds, $savedIds);
+            }
+            
+            $fillScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
+                ->whereNotIn('id', $excludeIds)
+                ->with(['countries', 'educationLevels', 'scholarshipTypes'])
+                ->orderByDesc('created_at')
+                ->orderByDesc('views_count')
+                ->take(3 - $similarScholarships->count())
+                ->get();
+            
+            $similarScholarships = $similarScholarships->merge($fillScholarships);
+        }
+
         $featuredScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
             ->where('id', '!=', $this->scholarship->id)
             ->where('sponsorship_tier', \App\Enums\SponsorshipTier::FEATURED)
