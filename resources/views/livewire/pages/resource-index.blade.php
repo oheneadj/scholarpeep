@@ -46,34 +46,39 @@
                             <div class="flex flex-wrap gap-2">
                                 @php
                                     $typeConfig = [
-                                        'guide' => ['color' => 'blue'],
-                                        'template' => ['color' => 'purple'],
-                                        'tool' => ['color' => 'emerald'],
-                                        'video' => ['color' => 'rose'],
-                                        'article' => ['color' => 'amber'],
-                                        'calculator' => ['color' => 'indigo'],
+                                        'guide' => ['color' => 'blue', 'icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+                                        'template' => ['color' => 'purple', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                                        'tool' => ['color' => 'emerald', 'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
+                                        'video' => ['color' => 'rose', 'icon' => 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'],
+                                        'article' => ['color' => 'amber', 'icon' => 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z'],
+                                        'calculator' => ['color' => 'indigo', 'icon' => 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z'],
                                     ];
                                 @endphp
                                 @foreach($resourceTypes as $type)
-                                    @php $config = $typeConfig[$type] ?? ['color' => 'gray']; @endphp
+                                    @php $config = $typeConfig[$type] ?? ['color' => 'gray', 'icon' => '']; @endphp
                                     <button wire:click="filterByType('{{ $type }}')"
-                                        class="group inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all {{ $selectedType === $type ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-primary-300' }}">
-                                        @if($selectedType === $type)
-                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                    clip-rule="evenodd" />
+                                        class="group inline-flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-200 {{ $selectedType === $type ? 'bg-gray-900 border-gray-900 text-white shadow-md transform scale-105' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50' }}">
+                                        @if(isset($config['icon']))
+                                            <svg class="w-4 h-4 {{ $selectedType === $type ? 'text-white' : 'text-gray-400 group-hover:text-gray-600' }}"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="{{ $config['icon'] }}" />
                                             </svg>
                                         @endif
-                                        <span class="font-medium capitalize">{{ $type }}</span>
+                                        <span class="text-sm font-semibold capitalize">{{ $type }}</span>
                                     </button>
                                 @endforeach
                             </div>
 
                             @if($selectedType)
                                 <button wire:click="resetFilters"
-                                    class="mt-3 text-sm text-gray-600 hover:text-gray-900 font-medium">
-                                    Select All
+                                    class="mt-3 text-xs text-gray-500 hover:text-gray-900 font-medium flex items-center gap-1 group">
+                                    <svg class="w-3 h-3 group-hover:rotate-180 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Clear filter
                                 </button>
                             @endif
                         </div>
