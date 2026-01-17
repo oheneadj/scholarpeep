@@ -18,6 +18,7 @@ class Scholarship extends Model
         'eligibility_criteria',
         'provider_name',
         'provider_logo',
+        'featured_image',
         'award_amount',
         'currency',
         'application_url',

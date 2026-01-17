@@ -29,6 +29,11 @@ class ScholarshipForm
                                 \Filament\Forms\Components\FileUpload::make('provider_logo')
                                     ->image()
                                     ->directory('provider-logos'),
+                                \Filament\Forms\Components\FileUpload::make('featured_image')
+                                    ->image()
+                                    ->directory('scholarship-images')
+                                    ->label('Featured Image')
+                                    ->helperText('Upload a featured image for this scholarship (recommended: 1200x600px)'),
                                 \Filament\Forms\Components\RichEditor::make('description')
                                     ->required()
                                     ->columnSpanFull(),
