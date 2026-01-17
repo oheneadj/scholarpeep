@@ -93,9 +93,10 @@
                     <div
                         class="absolute -bottom-12 -left-12 w-48 h-48 bg-primary-200 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000">
                     </div>
-
+                    {{--
                     <img src="{{ Str::startsWith($post->featured_image, 'http') ? $post->featured_image : \Illuminate\Support\Facades\Storage::url($post->featured_image) }}"
                         class="relative w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                    --}}
                 </div>
             </div>
         </div>

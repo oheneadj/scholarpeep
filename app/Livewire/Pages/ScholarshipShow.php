@@ -111,11 +111,24 @@ class ScholarshipShow extends Component
 
     public function render()
     {
+        // Get related scholarships based on multiple criteria
         $similarScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
             ->where('id', '!=', $this->scholarship->id)
-            ->whereHas('scholarshipTypes', function ($q) {
-                $q->whereIn('scholarship_types.id', $this->scholarship->scholarshipTypes->pluck('id'));
+            ->where(function ($query) {
+                // Match by scholarship type
+                $query->whereHas('scholarshipTypes', function ($q) {
+                    $q->whereIn('scholarship_types.id', $this->scholarship->scholarshipTypes->pluck('id'));
+                })
+                // OR match by country
+                ->orWhereHas('countries', function ($q) {
+                    $q->whereIn('countries.id', $this->scholarship->countries->pluck('id'));
+                })
+                // OR match by education level
+                ->orWhereHas('educationLevels', function ($q) {
+                    $q->whereIn('education_levels.id', $this->scholarship->educationLevels->pluck('id'));
+                });
             })
+            ->with(['countries', 'educationLevels', 'scholarshipTypes'])
             ->latest()
             ->take(6)
             ->get();
