@@ -7,6 +7,7 @@ use App\Models\ScholarshipView;
 use App\Models\AffiliateClick;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\RateLimiter;
 
 #[Layout('layouts.frontend')]
 class ScholarshipShow extends Component
@@ -66,19 +67,32 @@ class ScholarshipShow extends Component
             return redirect()->route('login');
         }
 
-        $saved = auth()->user()->savedScholarships()
+        $user = auth()->user();
+        $key = 'save-scholarship:'.$user->id;
+
+        if (RateLimiter::tooManyAttempts($key, 10)) {
+            $seconds = RateLimiter::availableIn($key);
+            $this->dispatch('notify', message: "Too many requests. Please wait $seconds seconds.");
+            return;
+        }
+
+        RateLimiter::hit($key);
+
+        $saved = $user->savedScholarships()
             ->where('scholarship_id', $this->scholarship->id)
             ->first();
 
         if ($saved) {
             $saved->delete();
             $this->isSaved = false;
+            $this->dispatch('notify', message: 'Scholarship removed from saved.');
         } else {
-            auth()->user()->savedScholarships()->create([
+            $user->savedScholarships()->create([
                 'scholarship_id' => $this->scholarship->id,
                 'status' => \App\Enums\ApplicationStatus::SAVED,
             ]);
             $this->isSaved = true;
+            $this->dispatch('notify', message: 'Scholarship saved to dashboard!');
         }
     }
 

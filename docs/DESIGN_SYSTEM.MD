@@ -229,28 +229,28 @@ p-16: 4rem (64px)     /* Hero sections */
 
 **Primary Button:**
 ```html
-<button class="bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
+<button class="bg-primary-600 text-white px-4 py-2 rounded-full font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
   Button Text
 </button>
 ```
 
 **Secondary Button:**
 ```html
-<button class="bg-white text-primary-600 border border-primary-600 px-4 py-2 rounded-lg font-medium hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
+<button class="bg-white text-primary-600 border border-primary-600 px-4 py-2 rounded-full font-medium hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
   Button Text
 </button>
 ```
 
 **Success Button:**
 ```html
-<button class="bg-success-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 transition-colors">
+<button class="bg-success-600 text-white px-4 py-2 rounded-full font-medium hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 transition-colors">
   Save
 </button>
 ```
 
 **Outline Button:**
 ```html
-<button class="bg-transparent text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
+<button class="bg-transparent text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
   Cancel
 </button>
 ```
@@ -271,7 +271,7 @@ p-16: 4rem (64px)     /* Hero sections */
 
 **Standard Card:**
 ```html
-<div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+<div class="bg-white rounded-lg shadow-200/50 p-6 hover:shadow-md transition-shadow">
   <!-- Card content -->
 </div>
 ```
@@ -294,7 +294,7 @@ p-16: 4rem (64px)     /* Hero sections */
 
 **Card with Image:**
 ```html
-<div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+<div class="bg-white rounded-lg shadow-200/50 overflow-hidden hover:shadow-md transition-shadow">
   <img src="..." alt="..." class="w-full h-48 object-cover">
   <div class="p-6">
     <!-- Card content -->
