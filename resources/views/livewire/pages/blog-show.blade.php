@@ -187,6 +187,11 @@
 
                 <!-- Bottom Newsletter -->
                 <x-widgets.newsletter-cta />
+
+                <!-- Advertisement Section -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                    <x-ad position="{{ \App\Enums\AdPosition::IN_TEXT }}" />
+                </div>
             </main>
 
             <!-- Right: Sticky Sidebar -->
@@ -209,7 +214,7 @@
                 </div>
 
                 <!-- Popular Posts -->
-                <x-widgets.popular-posts-widget :posts="$popularPosts" title="Stories That Matter" />
+                {{-- <x-widgets.popular-posts-widget :posts="$popularPosts" title="Stories That Matter" /> --}}
 
                 <!-- Topics -->
                 <x-widgets.topics-list :topics="$topics" title="Scholarship Topics" />

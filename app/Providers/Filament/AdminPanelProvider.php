@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('Scholarpeep Admin')
             ->colors([
-                'primary' => Color::Teal,
+                'primary' => Color::Blue,
             ])
             ->navigationGroups([
                 'Scholarships',

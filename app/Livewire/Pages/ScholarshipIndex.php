@@ -130,11 +130,56 @@ class ScholarshipIndex extends Component
 
     public function render()
     {
-        $query = Scholarship::query()
+        $baseQuery = Scholarship::query()
             ->where('status', \App\Enums\ScholarshipStatus::ACTIVE)
             ->with(['countries', 'educationLevels', 'fieldsOfStudy', 'scholarshipTypes']);
 
-        // Filtering
+        // Applying Filters to base query
+        $this->applyFilters($baseQuery);
+
+        // Fetch Premium Scholarships separately (up to 2)
+        $premiumScholarships = (clone $baseQuery)
+            ->where('sponsorship_tier', \App\Enums\SponsorshipTier::PREMIUM)
+            ->latest()
+            ->take(2)
+            ->get();
+
+        $premiumIds = $premiumScholarships->pluck('id')->toArray();
+
+        // Main Query (excluding Premium items already shown)
+        $query = (clone $baseQuery)->whereNotIn('id', $premiumIds);
+
+        // Sorting
+        match ($this->sortBy) {
+            'deadline' => $query->orderBy('primary_deadline', 'asc'),
+            'award_high' => $query->orderBy('award_amount', 'desc'),
+            'newest' => $query->latest(),
+            default => $query->orderByRaw("CASE sponsorship_tier 
+                WHEN 'featured' THEN 1 
+                ELSE 2 END ASC")->latest(),
+        };
+
+        $scholarships = $query->paginate($this->perPage);
+
+        // If default sorting (Recommended), intersperse featured results
+        if ($this->sortBy === 'relevance') {
+            $this->intersperseFeaturedResults($scholarships);
+        }
+
+        return view('livewire.pages.scholarship-index', [
+            'scholarships' => $scholarships,
+            'premiumScholarships' => $premiumScholarships,
+            'countries' => Country::orderBy('name')->get(),
+            'educationLevels' => EducationLevel::orderBy('name')->get(),
+            'fieldsOfStudy' => FieldOfStudy::whereNull('parent_id')->with('children')->orderBy('name')->get(),
+            'scholarshipTypes' => \App\Models\ScholarshipType::all(),
+            'recentSearches' => session()->get('recent_searches', []),
+            'suggestions' => $this->search ? $this->getSuggestions() : [],
+        ]);
+    }
+
+    protected function applyFilters($query)
+    {
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
@@ -172,30 +217,35 @@ class ScholarshipIndex extends Component
                 $q->whereIn('scholarship_types.slug', $this->selectedTypes);
             });
         }
+    }
 
-        // Sorting
-        match ($this->sortBy) {
-            'deadline' => $query->orderBy('primary_deadline', 'asc'),
-            'award_high' => $query->orderBy('award_amount', 'desc'),
-            'newest' => $query->latest(),
-            default => $query->orderByRaw("CASE sponsorship_tier 
-                WHEN 'premium' THEN 1 
-                WHEN 'featured' THEN 2 
-                WHEN 'standard' THEN 3 
-                ELSE 4 END ASC")->latest(),
-        };
+    protected function intersperseFeaturedResults($paginator)
+    {
+        $items = $paginator->getCollection();
+        $featured = $items->where('sponsorship_tier', \App\Enums\SponsorshipTier::FEATURED)->values();
+        $standard = $items->where('sponsorship_tier', '!=', \App\Enums\SponsorshipTier::FEATURED)->values();
 
-        $scholarships = $query->paginate($this->perPage);
+        $mixed = collect();
+        $fIndex = 0;
+        $sIndex = 0;
 
-        return view('livewire.pages.scholarship-index', [
-            'scholarships' => $scholarships,
-            'countries' => Country::orderBy('name')->get(),
-            'educationLevels' => EducationLevel::orderBy('name')->get(),
-            'fieldsOfStudy' => FieldOfStudy::whereNull('parent_id')->with('children')->orderBy('name')->get(),
-            'scholarshipTypes' => \App\Models\ScholarshipType::all(),
-            'recentSearches' => session()->get('recent_searches', []),
-            'suggestions' => $this->search ? $this->getSuggestions() : [],
-        ]);
+        // Intersperse: 1 featured every 3 standard (position 4, 8, 12...)
+        while ($sIndex < $standard->count() || $fIndex < $featured->count()) {
+            // Add up to 3 standard
+            for ($i = 0; $i < 3 && $sIndex < $standard->count(); $i++) {
+                $mixed->push($standard[$sIndex++]);
+            }
+
+            // Add 1 featured
+            if ($fIndex < $featured->count()) {
+                $mixed->push($featured[$fIndex++]);
+            } elseif ($sIndex < $standard->count()) {
+                // If no more featured, just keep pushing standard
+                continue;
+            }
+        }
+
+        $paginator->setCollection($mixed);
     }
 
     protected function getSuggestions()

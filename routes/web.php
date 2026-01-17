@@ -26,4 +26,10 @@ Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
     ->name('socialite.callback');
 
+// Ad Click Tracking
+Route::get('/ads/{ad}/click', [\App\Http\Controllers\AdClickController::class, 'track'])
+    ->name('ads.track');
+Route::post('/ads/{ad}/impression', [\App\Http\Controllers\AdClickController::class, 'trackImpression'])
+    ->name('ads.impression');
+
 require __DIR__ . '/settings.php';
