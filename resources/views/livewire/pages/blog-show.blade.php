@@ -189,7 +189,7 @@
             </main>
 
             <!-- Right: Sticky Sidebar -->
-            <aside class="lg:col-span-4 space-y-12 sticky top-24">
+            <aside class="lg:col-span-4 space-y-12">
 
                 <!-- Author Widget -->
                 <x-widgets.author-widget :name="$post->author->name" role="Senior Editor" :bio="'Passionate about democratizing education access. finding the best funding opportunities for students worldwide.'"
@@ -222,6 +222,9 @@
 
                 <!-- Newsletter Widget -->
                 <x-widgets.newsletter-widget />
+
+                <!-- Sticky Ad Widget -->
+                <x-widgets.ad-widget />
 
             </aside>
         </div>

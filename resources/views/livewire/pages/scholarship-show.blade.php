@@ -247,7 +247,7 @@
             </main>
 
             <!-- Right: Sticky Sidebar -->
-            <aside class="lg:col-span-4 space-y-12 sticky top-24">
+            <aside class="lg:col-span-4 space-y-12">
                 <!-- Author Bio -->
                 <x-widgets.author-widget 
                     name="Scholarpeep" 
@@ -274,6 +274,9 @@
 
                 <!-- Newsletter Widget -->
                 <x-widgets.newsletter-widget />
+
+                <!-- Sticky Ad Widget -->
+                <x-widgets.ad-widget />
             </aside>
         </div>
     </div>
