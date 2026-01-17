@@ -44,7 +44,7 @@
                 <span class="text-xs font-bold text-gray-700">{{ $post->author->name }}</span>
             </div>
             <span
-                class="text-primary-600 hover:text-primary-700 text-sm font-bold group-hover:translate-x-1 transition-transform inline-flex items-center">
+                class="text-white px-2 py-1 rounded-full bg-black hover:bg-black/10 hover:text-primary-700 text-sm font-bold group-hover:translate-x-1 transition-transform inline-flex items-center">
                 Read more <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>

@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
 
         // Seed sample scholarships
         $this->call(ScholarshipSeeder::class);
+        $this->call(BlogPostSeeder::class);
     }
 }

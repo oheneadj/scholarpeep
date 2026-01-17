@@ -21,11 +21,13 @@ class BlogPost extends Model
         'published_at',
         'meta_title',
         'meta_description',
+        'is_featured',
         'views_count',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'is_featured' => 'boolean',
         'published_at' => 'datetime',
         'views_count' => 'integer',
     ];
