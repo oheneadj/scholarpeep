@@ -43,12 +43,12 @@
                     class="w-6 h-6 rounded-full">
                 <span class="text-xs font-bold text-gray-700">{{ $post->author->name }}</span>
             </div>
-            <span
-                class="text-white px-2 py-1 rounded-full bg-black hover:bg-black/10 hover:text-primary-700 text-sm font-bold group-hover:translate-x-1 transition-transform inline-flex items-center">
-                Read more <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('blog.show', $post->slug) }}"
+                class="inline-flex items-center gap-1 px-4 py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all transform hover:scale-105 shadow-sm hover:shadow-md relative z-20">
+                Read more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
-            </span>
+            </a>
         </div>
     </div>
 </article>
