@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class EducationLevel extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'name',
+        'slug',
+        'order',
+    ];
+
+    protected $casts = [
+        'order' => 'integer',
+    ];
+
+    public function scholarships(): BelongsToMany
+    {
+        return $this->belongsToMany(Scholarship::class);
+    }
+}
