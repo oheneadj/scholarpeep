@@ -32,14 +32,14 @@ class NotifyDeadlineReminders extends Command
     {
         $this->info('Starting deadline reminder notifications...');
 
-        User::whereHas('preferences', function ($query) {
+        User::whereHas('preference', function ($query) {
             $query->where('notify_deadlines', true);
-        })->with(['preferences', 'savedScholarships' => function ($query) {
+        })->with(['preference', 'savedScholarships' => function ($query) {
             $query->whereIn('status', [ApplicationStatus::SAVED->value, ApplicationStatus::PENDING->value])
                   ->with('scholarship');
         }])->chunk(100, function ($users) {
             foreach ($users as $user) {
-                $preferences = $user->preferences;
+                $preferences = $user->preference;
                 $reminderDays = $preferences->deadline_reminder_days ?? 7;
 
                 foreach ($user->savedScholarships as $saved) {

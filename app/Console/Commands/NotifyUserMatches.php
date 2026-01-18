@@ -34,11 +34,11 @@ class NotifyUserMatches extends Command
     {
         $this->info('Starting scholarship match notifications...');
 
-        User::whereHas('preferences', function ($query) {
+        User::whereHas('preference', function ($query) {
             $query->where('notify_new_matches', true);
-        })->with('preferences')->chunk(100, function ($users) {
+        })->with('preference')->chunk(100, function ($users) {
             foreach ($users as $user) {
-                $preferences = $user->preferences;
+                $preferences = $user->preference;
                 
                 if (!$this->shouldNotify($preferences)) {
                     continue;

@@ -140,7 +140,7 @@
                 <article class="prose prose-xl prose-primary prose-headings:font-display prose-headings:font-bold prose-p:text-gray-500 prose-p:leading-relaxed max-w-none">
                     <h2 class="text-3xl text-gray-900 mb-8">Detailed Scholarship Overview</h2>
                     <div class="whitespace-pre-line text-gray-600">
-                        {{ $scholarship->description }}
+                        {!! $scholarship->description  !!}
                     </div>
 
                     <h2 class="text-3xl text-gray-900 mt-16 mb-8">Eligibility & Criteria</h2>

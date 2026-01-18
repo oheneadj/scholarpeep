@@ -13,6 +13,11 @@
 5. **Don't Repeat Yourself (DRY)** - Extract common logic into reusable functions
 6. **Keep It Simple (KISS)** - Simple solutions are easier to maintain
 7. **Test Everything** - Write tests for all new features and bug fixes
+8. **Use Tenant_id for all queries dont use user_id** - Simple solutions are easier to maintain
+9. **Be sure to update the .env and .env,example with all the name of the API_keys and Thirdpartyy credentials needed.** - This allows me to provide the necesary keys for you to use.
+10. **Never call .env values directly. Alwasys use the config** - Prevents app from failing when variables are cached
+
+
 
 ---
 

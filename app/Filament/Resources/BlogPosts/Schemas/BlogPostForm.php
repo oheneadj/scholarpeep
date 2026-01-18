@@ -64,7 +64,7 @@ class BlogPostForm
                             ->required(),
                         DateTimePicker::make('published_at')
                             ->default(now()),
-                    ])->columns(2),
+                    ])->columns(1),
 
                 Section::make('SEO Metadata')
                     ->schema([

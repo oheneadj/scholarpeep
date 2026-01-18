@@ -220,9 +220,28 @@
         </div>
     </div>
 
-    <!-- Scholarship Display -->
+    <!-- Premium Section -->
+    @if($premiumScholarships->count() > 0 && $scholarships->onFirstPage())
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="h-px flex-1 bg-purple-100"></div>
+                <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 bg-purple-50 px-4 py-1.5 rounded-full border border-purple-100 flex items-center gap-2">
+                    <svg class="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Premium Sponsored
+                </h2>
+                <div class="h-px flex-1 bg-purple-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @foreach($premiumScholarships as $premium)
+                    <x-scholarship-card :scholarship="$premium" view="grid" class="border-2 border-purple-500 shadow-xl shadow-purple-600/10" wire:key="premium-{{ $premium->id }}" />
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    <!-- Main Results Section -->
     @if($scholarships->count() > 0)
-        <!-- Grid Layout (3 Columns on Large Screens) -->
         <div class="{{ $viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4' }}">
             @foreach($scholarships as $scholarship)
                 <x-scholarship-card :scholarship="$scholarship" :view="$viewMode" wire:key="scholarship-card-{{ $scholarship->id }}-{{ $loop->index }}" />
