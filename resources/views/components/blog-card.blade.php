@@ -1,14 +1,15 @@
 @props(['post'])
 
 <article
-    class="group bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col md:flex-row gap-6 relative overflow-hidden">
+    class="group bg-white rounded-2xl p-4 shadow-200/50 hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col md:flex-row gap-6 relative overflow-hidden">
     <!-- Image -->
-    <div class="w-full md:w-64 h-48 rounded-xl overflow-hidden shrink-0 relative">
+    <div
+        class="w-full md:w-64 h-48 rounded-2xl overflow-hidden shrink-0 relative flex items-center justify-center bg-gray-50 border border-gray-100">
         <span
-            class="absolute top-3 left-3 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded text-primary-700 z-10">
+            class="absolute top-3 left-3 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg text-primary-700 z-10 border border-gray-100 shadow-sm">
             Article
         </span>
-        <img src="{{ Str::startsWith($post->featured_image, 'http') ? $post->featured_image : \Illuminate\Support\Facades\Storage::url($post->featured_image) }}"
+        <img src="{{ $post->featured_image_url }}"
             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
     </div>
 
@@ -22,29 +23,28 @@
                 </svg>
                 {{ $post->published_at->format('M j, Y') }}
             </div>
-            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-            <span class="text-[10px] font-bold uppercase tracking-widest text-primary-500">5 min
-                read</span>
+            <span class="w-1 h-1 rounded-full bg-gray-200"></span>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-primary-500">5 min read</span>
         </div>
 
         <h2
-            class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors font-display leading-tight">
+            class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors leading-snug tracking-tight">
             <a href="{{ route('blog.show', $post->slug) }}"
                 class="before:absolute before:inset-0">{{ $post->title }}</a>
         </h2>
 
-        <p class="text-gray-500 text-sm leading-relaxed line-clamp-2 md:line-clamp-3 mb-4">
+        <p class="text-gray-500 text-sm font-medium leading-relaxed line-clamp-2 md:line-clamp-3 mb-4">
             {{ $post->excerpt }}
         </p>
 
-        <div class="mt-auto flex items-center justify-between">
+        <div class="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
             <div class="flex items-center gap-2">
                 <img src="{{ $post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name) }}"
-                    class="w-6 h-6 rounded-full">
+                    class="w-6 h-6 rounded-full ring-2 ring-gray-100">
                 <span class="text-xs font-bold text-gray-700">{{ $post->author->name }}</span>
             </div>
             <a href="{{ route('blog.show', $post->slug) }}"
-                class="inline-flex items-center gap-1 px-4 py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all transform hover:scale-105 shadow-sm hover:shadow-md relative z-20">
+                class="inline-flex items-center gap-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-full transition-all transform hover:scale-105 shadow-sm hover:shadow-md relative z-20">
                 Read more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>

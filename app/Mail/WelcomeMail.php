@@ -35,8 +35,17 @@ class WelcomeMail extends Mailable
      */
     public function content(): Content
     {
+        $template = \App\Models\EmailTemplate::getBySlug('welcome');
+        
         return new Content(
-            view: 'emails.welcome',
+            view: 'emails.dynamic',
+            with: [
+                'content' => \Illuminate\Support\Facades\Blade::render(
+                    $template?->content ?? '',
+                    ['user' => $this->user]
+                ),
+                'preheader' => $template?->preheader,
+            ],
         );
     }
 

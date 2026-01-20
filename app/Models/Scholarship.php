@@ -87,10 +87,15 @@ class Scholarship extends Model
         return $this->hasMany(SavedScholarship::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     // Query Scopes
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('status', \App\Enums\ScholarshipStatus::ACTIVE);
     }
 
     public function scopeFeatured($query)

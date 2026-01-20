@@ -35,6 +35,9 @@ class FaqIndex extends Component
         return view('livewire.pages.faq-index', [
             'faqs' => $faqs,
             'groupedFaqs' => $groupedFaqs,
-        ])->layout('layouts.frontend');
+        ])->layout('layouts.frontend')->layoutData([
+            'title' => app(\App\Settings\SeoSettings::class)->faq_title ?? 'Frequently Asked Questions - Scholarpeep',
+            'description' => app(\App\Settings\SeoSettings::class)->faq_description ?? 'Get answers to common questions about scholarships, financial aid, and calculating your chances of winning.',
+        ]);
     }
 }

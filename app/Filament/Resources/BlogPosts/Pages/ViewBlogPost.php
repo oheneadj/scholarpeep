@@ -14,6 +14,10 @@ class ViewBlogPost extends ViewRecord
     {
         return [
             EditAction::make(),
+            \Filament\Actions\Action::make('preview')
+                ->url(fn () => route('blog.show', $this->record->slug))
+                ->openUrlInNewTab()
+                ->icon('heroicon-o-eye'),
         ];
     }
 }

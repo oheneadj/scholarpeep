@@ -6,10 +6,13 @@ use App\Models\Scholarship;
 use App\Models\Country;
 use App\Models\EducationLevel;
 use App\Models\FieldOfStudy;
+use App\Models\SavedSearch;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\On;
 
 #[Layout('layouts.frontend')]
 class ScholarshipIndex extends Component
@@ -17,29 +20,26 @@ class ScholarshipIndex extends Component
     use WithPagination;
     use \App\Livewire\Traits\CanSaveScholarship;
 
-    #[Url(as: 'q')]
-    public $search = '';
-
-    #[Url(as: 'country')]
-    public $selectedCountry = '';
-
-    #[Url(as: 'level')]
-    public $selectedLevel = '';
-
-    #[Url(as: 'field')]
-    public $selectedField = '';
-
-    #[Url(as: 'award_min')]
-    public $awardMin = 0;
-
-    #[Url(as: 'award_max')]
-    public $awardMax = 100000;
-
-    #[Url(as: 'types')]
-    public $selectedTypes = [];
-
     #[Url(as: 'sort')]
     public $sortBy = 'relevance';
+
+    // Filter state
+    public $filters = [
+        'search' => '',
+        'selectedCountries' => [],
+        'selectedLevels' => [],
+        'selectedFields' => [],
+        'awardMin' => 0,
+        'awardMax' => 100000,
+        'selectedTypes' => [],
+    ];
+
+    #[On('filters-updated')]
+    public function updateFilters($filters)
+    {
+        $this->filters = $filters;
+        $this->resetPage();
+    }
 
     public $viewMode = 'grid';
     public $perPage = 12;
@@ -48,51 +48,6 @@ class ScholarshipIndex extends Component
     {
         $this->viewMode = session('viewMode', 'grid');
         $this->mountCanSaveScholarship();
-    }
-
-    public function updatedSearch()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-        if (strlen($this->search) > 2) {
-            $this->addToRecentSearches($this->search);
-        }
-    }
-
-    public function updatedSelectedCountry()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedSelectedLevel()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedSelectedField()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedAwardMin()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedAwardMax()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedSelectedTypes()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
-    }
-    public function updatedSortBy()
-    {
-        $this->perPage = 12;
-        $this->resetPage();
     }
 
     public function addToRecentSearches($term)
@@ -124,8 +79,13 @@ class ScholarshipIndex extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search', 'selectedCountry', 'selectedLevel', 'selectedField', 'awardMin', 'awardMax', 'selectedTypes', 'sortBy']);
+        $this->reset(['search', 'selectedCountries', 'selectedLevels', 'selectedFields', 'awardMin', 'awardMax', 'selectedTypes', 'sortBy']);
         $this->resetPage();
+    }
+
+    public function saveSearch()
+    {
+        // This will now be handled in the Filters component
     }
 
     public function render()
@@ -166,55 +126,64 @@ class ScholarshipIndex extends Component
             $this->intersperseFeaturedResults($scholarships);
         }
 
+        app(\App\Services\MetaService::class)->setMeta(
+            title: app(\App\Settings\SeoSettings::class)->scholarships_title ?? 'Browse Scholarships',
+            description: app(\App\Settings\SeoSettings::class)->scholarships_description ?? 'Explore verified scholarships for undergraduate, masters, and PhD studies.',
+        );
+
         return view('livewire.pages.scholarship-index', [
             'scholarships' => $scholarships,
             'premiumScholarships' => $premiumScholarships,
-            'countries' => Country::orderBy('name')->get(),
-            'educationLevels' => EducationLevel::orderBy('name')->get(),
-            'fieldsOfStudy' => FieldOfStudy::whereNull('parent_id')->with('children')->orderBy('name')->get(),
+            'countries' => Country::orderBy('name', 'asc')->get(),
+            'educationLevels' => EducationLevel::orderBy('name', 'asc')->get(),
+            'fieldsOfStudy' => FieldOfStudy::whereNull('parent_id')
+                ->with('children')
+                ->orderBy('name', 'asc')
+                ->get(),
             'scholarshipTypes' => \App\Models\ScholarshipType::all(),
             'recentSearches' => session()->get('recent_searches', []),
-            'suggestions' => $this->search ? $this->getSuggestions() : [],
+            'suggestions' => $this->filters['search'] ? $this->getSuggestions() : [],
         ]);
     }
 
     protected function applyFilters($query)
     {
-        if ($this->search) {
+        if ($this->filters['search']) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                    ->orWhere('provider_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('description', 'like', '%' . $this->search . '%');
+                $q->where('title', 'like', '%' . $this->filters['search'] . '%')
+                    ->orWhere('provider_name', 'like', '%' . $this->filters['search'] . '%')
+                    ->orWhere('description', 'like', '%' . $this->filters['search'] . '%');
             });
+            $this->addToRecentSearches($this->filters['search']);
         }
 
-        if ($this->selectedCountry) {
+        if (!empty($this->filters['selectedCountries'])) {
             $query->whereHas('countries', function ($q) {
-                $q->where('countries.slug', $this->selectedCountry);
+                $q->whereIn('countries.slug', $this->filters['selectedCountries']);
             });
         }
 
-        if ($this->selectedLevel) {
+        if (!empty($this->filters['selectedLevels'])) {
             $query->whereHas('educationLevels', function ($q) {
-                $q->where('education_levels.slug', $this->selectedLevel);
+                $q->whereIn('education_levels.slug', $this->filters['selectedLevels']);
             });
         }
 
-        if ($this->selectedField) {
+        if (!empty($this->filters['selectedFields'])) {
             $query->whereHas('fieldsOfStudy', function ($q) {
-                $q->where('field_of_studies.slug', $this->selectedField);
+                $q->whereIn('field_of_studies.slug', $this->filters['selectedFields']);
             });
         }
 
-        if ($this->awardMin > 0 || $this->awardMax < 100000) {
-            $min = is_numeric($this->awardMin) ? $this->awardMin : 0;
-            $max = is_numeric($this->awardMax) ? $this->awardMax : 100000;
+        if ($this->filters['awardMin'] > 0 || $this->filters['awardMax'] < 100000) {
+            $min = is_numeric($this->filters['awardMin']) ? $this->filters['awardMin'] : 0;
+            $max = is_numeric($this->filters['awardMax']) ? $this->filters['awardMax'] : 100000;
             $query->whereBetween('award_amount', [$min, $max]);
         }
 
-        if (!empty($this->selectedTypes)) {
+        if (!empty($this->filters['selectedTypes'])) {
             $query->whereHas('scholarshipTypes', function ($q) {
-                $q->whereIn('scholarship_types.slug', $this->selectedTypes);
+                $q->whereIn('scholarship_types.slug', $this->filters['selectedTypes']);
             });
         }
     }
@@ -252,15 +221,15 @@ class ScholarshipIndex extends Component
     {
         $suggestions = [];
 
-        if (strlen($this->search) < 2)
+        if (strlen($this->filters['search']) < 2)
             return [];
 
-        $fields = FieldOfStudy::where('name', 'like', '%' . $this->search . '%')->take(3)->get();
+        $fields = FieldOfStudy::where('name', 'like', '%' . $this->filters['search'] . '%', 'and')->take(3)->get();
         foreach ($fields as $field) {
             $suggestions[] = ['type' => 'field', 'label' => $field->name, 'value' => $field->slug];
         }
 
-        $countries = Country::where('name', 'like', '%' . $this->search . '%')->take(2)->get();
+        $countries = Country::where('name', 'like', '%' . $this->filters['search'] . '%', 'and')->take(2)->get();
         foreach ($countries as $country) {
             $suggestions[] = ['type' => 'country', 'label' => $country->name, 'value' => $country->slug];
         }

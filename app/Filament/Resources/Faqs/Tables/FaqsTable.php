@@ -37,7 +37,8 @@ class FaqsTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

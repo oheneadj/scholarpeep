@@ -1,288 +1,249 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="{ openTracker: false, toast: { show: false, message: '' } }" 
-     @open-tracker.window="openTracker = true"
-     @notify.window="toast.show = true; toast.message = $event.detail.message; setTimeout(() => { toast.show = false }, 3000)">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="{ 
+        openTracker: false, 
+        toast: { show: false, message: '' },
+        confirmDelete: { show: false, id: null, title: '', isBulk: false }
+     }" @open-tracker.window="openTracker = true"
+    @notify.window="toast.show = true; toast.message = $event.detail.message; setTimeout(() => { toast.show = false }, 3000)">
 
     {{-- Notification Toast --}}
-    <div x-show="toast.show" 
-         class="fixed top-24 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
-        <div class="bg-gray-900 shadow-200/50 rounded-full px-6 py-3 border border-gray-800 flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
-            <span class="text-sm font-bold text-white uppercase tracking-widest px-2" x-text="toast.message"></span>
+    <div x-show="toast.show" class="fixed top-24 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
+        <div class="bg-gray-900 shadow-xl rounded-full px-6 py-3 border border-gray-800 flex items-center gap-3">
+            <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+            <span class="text-xs font-bold text-white uppercase tracking-wider px-2" x-text="toast.message"></span>
         </div>
     </div>
-    <div class="mb-12">
-        <h1 class="text-4xl font-black font-display text-gray-900 mb-2 tracking-tight">My Dashboard</h1>
-        <p class="text-[10px] text-gray-400 font-extrabold uppercase tracking-[0.2em]">Manage your scholarship applications and track progress</p>
+    <div class="mb-10">
+        <h1 class="text-4xl font-bold text-gray-900 mb-1 tracking-tight">My Dashboard</h1>
+        <p class="text-xs font-semibold text-gray-400 tracking-wider">Manage your scholarship applications and
+            track progress</p>
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-        <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-200/50">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Saved</p>
-            <p class="text-3xl font-bold text-gray-900 font-display">{{ $stats['saved'] }}</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-12">
+        {{-- Saved --}}
+        <x-dashboard.stat-card label="Saved" :value="$stats['saved']" subtext="Total" color="primary">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+            </x-slot:icon>
+        </x-dashboard.stat-card>
+
+        {{-- Applied --}}
+        <x-dashboard.stat-card label="Applied" :value="$stats['applied']" subtext="Done" color="blue">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </x-slot:icon>
+        </x-dashboard.stat-card>
+
+        {{-- Pending --}}
+        <x-dashboard.stat-card label="Pending" :value="$stats['pending']" subtext="Decision" color="orange">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </x-slot:icon>
+        </x-dashboard.stat-card>
+
+        {{-- Expiring --}}
+        <x-dashboard.stat-card label="Expiring" :value="$stats['expiring_soon']" subtext="7 Days" color="rose">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </x-slot:icon>
+        </x-dashboard.stat-card>
+
+        {{-- Potential Award --}}
+        <x-dashboard.stat-card label="Potential" color="emerald">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </x-slot:icon>
+            <div class="flex items-baseline gap-1">
+                <span class="text-[10px] font-black text-gray-400 uppercase">$</span>
+                <span
+                    class="text-2xl font-black text-gray-900 tracking-tight">{{ number_format($stats['potential_award'] / 1000, 1) }}k</span>
+            </div>
+        </x-dashboard.stat-card>
+
+        {{-- Applied Value --}}
+        <x-dashboard.stat-card label="Applied Val." color="emerald-dark">
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </x-slot:icon>
+            <div class="flex items-baseline gap-1">
+                <span class="text-[10px] font-black text-gray-400 uppercase">$</span>
+                <span
+                    class="text-2xl font-black text-gray-900 tracking-tight">{{ number_format($stats['applied_award'] / 1000, 1) }}k</span>
+            </div>
+        </x-dashboard.stat-card>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {{-- Left Column: Pipeline --}}
+        <div class="lg:col-span-8 space-y-8">
+            {{-- Recommendations Section --}}
+            @if(!$hasPreferences)
+                <div class="bg-gray-900 rounded-2xl p-10 text-white relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-primary-600 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity duration-700">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue-600 rounded-full blur-[60px] opacity-30">
+                    </div>
+
+                    <div
+                        class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+                        <div class="max-w-lg">
+                            <h3 class="text-2xl font-bold mb-3 tracking-tight">Personalize your pipeline</h3>
+                            <p class="text-gray-300 font-medium text-lg leading-relaxed">Tell us your preferences and we'll
+                                curate the top scholarships that match your profile perfectly.</p>
+                        </div>
+                        <a href="{{ route('preferences.edit') }}"
+                            class="px-8 py-3 bg-white text-gray-900 font-bold uppercase tracking-wider rounded-full hover:bg-gray-50 hover:scale-105 transition-all shadow-lg shrink-0">
+                            Set Preferences
+                        </a>
+                    </div>
+                </div>
+            @elseif($recommendedScholarships->count() > 0)
+                <div
+                    class="bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
+                    <div class="flex items-center justify-between mb-6 relative z-10">
+                        <div>
+                            <h3 class="text-lg font-bold">Recommended for You</h3>
+                            <p class="text-primary-200 text-xs font-medium">Based on your preferences</p>
+                        </div>
+                        <a href="{{ route('scholarships.index') }}"
+                            class="text-xs font-bold text-white/50 hover:text-white transition">View All</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                        @foreach($recommendedScholarships as $scholarship)
+                            <div
+                                class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 hover:bg-white/20 transition group">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-primary-900 font-bold text-sm">
+                                        {{ substr($scholarship->provider_name, 0, 1) }}
+                                    </div>
+                                    <span
+                                        class="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-lg">High
+                                        Match</span>
+                                </div>
+                                <h4 class="font-bold text-white text-sm line-clamp-1 mb-0.5">{{ $scholarship->title }}</h4>
+                                <p class="text-[10px] text-primary-200 line-clamp-1 mb-4 uppercase tracking-wider">
+                                    {{ $scholarship->provider_name }}
+                                </p>
+                                <div class="flex items-center justify-between">
+                                    <span
+                                        class="text-sm font-bold text-emerald-300">${{ number_format($scholarship->award_amount) }}</span>
+                                    <a href="{{ route('scholarships.show', $scholarship->slug) }}"
+                                        class="w-8 h-8 rounded-lg bg-white text-primary-900 flex items-center justify-center hover:scale-110 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Scholarship Pipeline Widget --}}
+            <x-dashboard.scholarship-pipeline :savedScholarships="$savedScholarships" />
+
+            {{-- Saved Searches Widget --}}
+            <x-widgets.saved-searches :searches="$savedSearches" />
+
+            {{-- Recent Activity Widget --}}
+            {{-- <x-dashboard.recent-activity :recentActivity="$recentActivity" /> --}}
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-200/50">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Applied</p>
-            <p class="text-3xl font-bold text-primary-600 font-display">{{ $stats['applied'] }}</p>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-200/50">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Pending</p>
-            <p class="text-3xl font-bold text-warning-500 font-display">{{ $stats['pending'] }}</p>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-200/50">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Accepted</p>
-            <p class="text-3xl font-bold text-emerald-500 font-display">{{ $stats['accepted'] }}</p>
+
+        {{-- Right Column: Side Widgets --}}
+        <div class="lg:col-span-4 space-y-6">
+
+            {{-- Streak Widget --}}
+            <x-widgets.streak-widget :streak="$streakData['current']" :nextMilestone="$streakData['next_milestone']"
+                :daysLeft="$streakData['days_left']" />
+
+            {{-- Points Widget --}}
+            <x-widgets.points-widget :summary="$pointsSummary" />
+
+            {{-- Badges Widget --}}
+            <x-widgets.badges-widget :badges="$recentBadges" />
+
+            {{-- Recommended Tools Widget --}}
+            <x-widgets.recommended-tools :tools="$affiliateTools" />
+
+            {{-- Recently Viewed Widget --}}
+            <livewire:dashboard.recently-viewed-widget />
+
+            {{-- Calendar --}}
+            {{--
+            <livewire:dashboard.calendar /> --}}
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-200/50 relative">
-        {{-- Bulk Actions Bar --}}
-        <div x-show="$wire.selectedSavedIds.length > 0" 
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="translate-y-full opacity-0"
-             x-transition:enter-end="translate-y-0 opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="translate-y-0 opacity-100"
-             x-transition:leave-end="translate-y-full opacity-0"
-             class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-3xl shadow-2xl z-50 flex items-center gap-6 border border-gray-800 backdrop-blur-md bg-opacity-95">
-            <div class="flex items-center gap-3 border-r border-gray-700 pr-6">
-                <span class="bg-primary-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black">
-                    {{ count($selectedSavedIds) }}
-                </span>
-                <span class="text-sm font-bold text-gray-300">items selected</span>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mr-2">Update Status:</span>
-                @foreach(\App\Enums\ApplicationStatus::cases() as $status)
-                    <button wire:click="bulkUpdateStatus('{{ $status->value }}')"
-                            class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95
-                                   {{ $status->value === 'accepted' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' : '' }}
-                                   {{ $status->value === 'applied' ? 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20' : '' }}
-                                   {{ $status->value === 'pending' ? 'bg-warning-500/10 text-warning-400 hover:bg-warning-500/20' : '' }}
-                                   {{ $status->value === 'rejected' ? 'bg-rose-500/10 text-rose-400 hover:bg-rose-500/20' : '' }}
-                                   {{ $status->value === 'saved' ? 'bg-gray-500/10 text-gray-400 hover:bg-gray-500/20' : '' }}">
-                        {{ $status->label() }}
-                    </button>
-                @endforeach
-            </div>
+    {{-- Modals and Slide-overs --}}
+    <livewire:dashboard.scholarship-status-update />
 
-            <div class="border-l border-gray-700 pl-6">
-                <button wire:click="bulkDelete" 
-                        wire:confirm="Are you sure you want to remove these scholarship applications?"
-                        class="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </button>
-            </div>
-        </div>
 
-        <div class="p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-gray-50/30">
-            <div>
-                <h2 class="text-xl font-bold font-display text-gray-900">Scholarship Pipeline</h2>
-                <p class="text-xs text-gray-500 font-medium">Track and manage your applications efficiently.</p>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
-                {{-- Search --}}
-                <div class="relative flex-1 md:w-64">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </span>
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search scholarships..." 
-                           class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all">
-                </div>
 
-                {{-- Status Filter --}}
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Filter:</span>
-                    <select wire:model.live="statusFilter"
-                            class="text-sm font-bold text-gray-900 border-gray-200 bg-white rounded-2xl px-4 py-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer">
-                        <option value="">All Statuses</option>
-                        @foreach(\App\Enums\ApplicationStatus::cases() as $status)
-                            <option value="{{ $status->value }}">{{ $status->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
 
-        @if($savedScholarships->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                            <th class="px-8 py-4 w-10">
-                                <input type="checkbox" wire:model.live="selectAll" 
-                                       class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition cursor-pointer">
-                            </th>
-                            <th class="px-4 py-4 cursor-pointer hover:text-primary-600 transition" wire:click="sortBy('title')">
-                                <div class="flex items-center gap-1">
-                                    Scholarship
-                                    @if($sortField === 'title')
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $sortDirection === 'asc' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7' }}" />
-                                        </svg>
-                                    @endif
-                                </div>
-                            </th>
-                            <th class="px-8 py-4 cursor-pointer hover:text-primary-600 transition" wire:click="sortBy('deadline')">
-                                <div class="flex items-center gap-1">
-                                    Deadline
-                                    @if($sortField === 'deadline')
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $sortDirection === 'asc' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7' }}" />
-                                        </svg>
-                                    @endif
-                                </div>
-                            </th>
-                            <th class="px-8 py-4">Status</th>
-                            <th class="px-8 py-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($savedScholarships as $saved)
-                            <tr class="group hover:bg-gray-50/50 transition {{ in_array((string)$saved->id, $selectedSavedIds) ? 'bg-primary-50/30' : '' }}">
-                                <td class="px-8 py-6">
-                                    <input type="checkbox" wire:model.live="selectedSavedIds" value="{{ $saved->id }}"
-                                           class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition cursor-pointer">
-                                </td>
-                                <td class="px-4 py-6">
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center p-2 shrink-0">
-                                            @if($saved->scholarship->provider_logo)
-                                                <img src="{{ Str::startsWith($saved->scholarship->provider_logo, 'http') ? $saved->scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($saved->scholarship->provider_logo) }}"
-                                                    alt="{{ $saved->scholarship->provider_name }}"
-                                                    class="max-h-full max-w-full object-contain">
-                                            @else
-                                                <div class="text-primary-600 font-bold text-sm">
-                                                    {{ substr($saved->scholarship->provider_name, 0, 1) }}</div>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <a href="{{ route('scholarships.show', $saved->scholarship->slug) }}"
-                                                class="font-bold text-gray-900 hover:text-primary-600 transition block mb-0.5">{{ $saved->scholarship->title }}</a>
-                                            <p class="text-xs text-gray-500">{{ $saved->scholarship->provider_name }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <p class="text-sm font-bold text-gray-900">
-                                        {{ $saved->scholarship->primary_deadline?->format('M j, Y') ?? 'Rolling' }}</p>
-                                    <p class="text-[10px] text-gray-400 uppercase font-bold">
-                                        {{ $saved->scholarship->primary_deadline?->diffForHumans() ?? '' }}</p>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <select wire:change="updateStatus({{ $saved->id }}, $event.target.value)" class="text-xs font-bold border rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary-500
-                                                {{ $saved->status->value === 'accepted' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : '' }}
-                                                {{ $saved->status->value === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-200' : '' }}
-                                                {{ $saved->status->value === 'applied' ? 'bg-blue-50 text-blue-700 border-blue-200' : '' }}
-                                                {{ $saved->status->value === 'saved' ? 'bg-gray-100 text-gray-600 border-gray-200' : '' }}
-                                                {{ $saved->status->value === 'pending' ? 'bg-warning-50 text-warning-700 border-warning-200' : '' }}
-                                            ">
-                                        @foreach(\App\Enums\ApplicationStatus::cases() as $status)
-                                            <option value="{{ $status->value }}" {{ $saved->status === $status ? 'selected' : '' }}>
-                                                {{ $status->label() }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <div class="flex items-center gap-3">
-                                        <button wire:click="showTracker({{ $saved->id }})"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-sm active:scale-95"
-                                            title="Track Requirements">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                            </svg>
-                                            Track
-                                        </button>
-                                        <a href="{{ $saved->scholarship->application_url }}" target="_blank"
-                                            class="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
-                                            title="Apply Now">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                            </svg>
-                                        </a>
-                                        <button wire:click="deleteSaved({{ $saved->id }})"
-                                            wire:confirm="Are you sure you want to remove this scholarship?"
-                                            class="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                            title="Remove">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="p-8 border-t border-gray-100">
-                {{ $savedScholarships->links() }}
-            </div>
-        @else
-            <div class="p-20 text-center">
-                <div class="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mx-auto mb-6">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold font-display text-gray-900 mb-2">No scholarships saved yet</h3>
-                <p class="text-gray-500 mb-8">Start exploring scholarships and save your favorites to track them here.</p>
-                <a href="{{ route('scholarships.index') }}"
-                    class="inline-flex items-center px-10 py-4 bg-primary-600 text-white font-black uppercase tracking-widest text-sm rounded-full hover:bg-primary-700 transition shadow-xl shadow-primary-600/10">
-                    Explore Scholarships
-                </a>
-            </div>
-        @endif
-    </div>
+    <!-- Requirements Tracker Slide-over -->
+    <div x-show="openTracker" class="fixed inset-0 overflow-hidden z-[65]" style="display: none;"
+        x-transition:enter="transition ease-in-out duration-500" x-transition:enter-start="translate-x-full"
+        x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-500"
+        x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
 
-    <!-- Slide-over -->
-    <div x-show="openTracker" 
-        class="fixed inset-0 overflow-hidden z-[60]" 
-        style="display: none;"
-        x-transition:enter="transition ease-in-out duration-500 sm:duration-700"
-        x-transition:enter-start="translate-x-full"
-        x-transition:enter-end="translate-x-0"
-        x-transition:leave="transition ease-in-out duration-500 sm:duration-700"
-        x-transition:leave-start="translate-x-0"
-        x-transition:leave-end="translate-x-full">
-        
         <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" 
-                @click="openTracker = false"
-                x-show="openTracker"
-                x-transition:enter="ease-in-out duration-500"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
-                x-transition:leave="ease-in-out duration-500"
-                x-transition:leave-start="opacity-100"
+            <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity"
+                @click="openTracker = false" x-show="openTracker" x-transition:enter="ease-in duration-300"
+                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-out duration-200" x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"></div>
 
             <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
                 <div class="w-screen max-w-md">
                     <div class="h-full flex flex-col bg-gray-50 shadow-2xl">
                         <div class="p-6 bg-white border-b border-gray-100 flex items-center justify-between">
-                            <h2 class="text-lg font-bold text-gray-900 font-display">Requirements Tracker</h2>
-                            <button @click="openTracker = false" class="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-lg font-bold text-gray-900 font-display">Requirements Tracker</h2>
+                            </div>
+                            <button @click="openTracker = false"
+                                class="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
 
                         <div class="flex-1 overflow-y-auto p-6">
                             @if($selectedSavedId)
-                                <livewire:dashboard.requirements-tracker :key="$selectedSavedId" :saved-scholarship-id="$selectedSavedId" />
+                                <livewire:dashboard.requirements-tracker :key="$selectedSavedId"
+                                    :saved-scholarship-id="$selectedSavedId" />
                             @endif
                         </div>
                     </div>
@@ -290,4 +251,63 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div x-show="confirmDelete.show" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;"
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+                @click="confirmDelete.show = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative inline-block align-middle bg-white rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100 z-[210]"
+                x-show="confirmDelete.show" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+
+                <div class="bg-white px-8 pt-10 pb-8">
+                    <div class="sm:flex sm:items-start">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-3xl bg-rose-50 sm:mx-0 sm:h-14 sm:w-14">
+                            <svg class="h-8 w-8 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-6 sm:text-left">
+                            <h3 class="text-2xl font-black font-display text-gray-900 leading-tight mb-2">
+                                Remove scholarship?
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 font-medium">
+                                    Are you sure you want to remove <span class="font-bold text-gray-900"
+                                        x-text="confirmDelete.title"></span>? This action cannot be undone.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-8 py-6 sm:flex sm:flex-row-reverse gap-3">
+                    <button type="button"
+                        class="w-full inline-flex justify-center px-8 py-3.5 bg-rose-600 text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-rose-700 transition shadow-lg shadow-rose-600/20 active:scale-95 sm:w-auto"
+                        @click="confirmDelete.isBulk ? $wire.bulkDelete() : $wire.deleteSaved(parseInt(confirmDelete.id)); confirmDelete.show = false">
+                        Confirm Delete
+                    </button>
+                    <button type="button"
+                        class="mt-3 w-full inline-flex justify-center px-8 py-3.5 bg-white border border-gray-200 text-gray-500 text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-gray-50 transition sm:mt-0 sm:w-auto active:scale-95"
+                        @click="confirmDelete.show = false">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>

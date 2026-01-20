@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Scholarships\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action as Preview;
 
 class ScholarshipsTable
 {
@@ -29,9 +31,21 @@ class ScholarshipsTable
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->color(fn ($state): string => match ($state instanceof \App\Enums\ScholarshipStatus ? $state->value : $state) {
+                        'published' => 'success',
+                        'draft' => 'gray',
+                        'archived' => 'warning',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('sponsorship_tier')
                     ->badge()
+                    ->color(fn ($state): string => match ($state instanceof \App\Enums\SponsorshipTier ? $state->value : $state) {
+                        'premium' => 'primary',
+                        'featured' => 'warning',
+                        'standard' => 'gray',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('views_count')
                     ->numeric()
@@ -49,8 +63,15 @@ class ScholarshipsTable
                     ->options(\App\Enums\SponsorshipTier::class),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->color('gray'),
+                EditAction::make()
+                    ->color('primary'),
+                Preview::make('preview')
+                    ->url(fn ($record) => route('scholarships.show', $record->slug))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-eye')
+                    ->color('success'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

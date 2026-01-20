@@ -13,6 +13,12 @@ class ListResources extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            \Filament\Actions\Action::make('view_public')
+                ->label('View Resources')
+                ->color('gray')
+                ->icon('heroicon-o-eye')
+                ->url(route('resources.index'))
+                ->openUrlInNewTab(),
             CreateAction::make(),
         ];
     }

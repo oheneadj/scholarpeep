@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AffiliateClick extends Model
 {
     public $timestamps = false;
 
     protected $fillable = [
-        'scholarship_id',
+        'clickable_id',
+        'clickable_type',
         'user_id',
         'ip_address',
+        'user_agent',
+        'referrer',
         'created_at',
     ];
 
@@ -20,9 +24,9 @@ class AffiliateClick extends Model
         'created_at' => 'datetime',
     ];
 
-    public function scholarship(): BelongsTo
+    public function clickable(): MorphTo
     {
-        return $this->belongsTo(Scholarship::class);
+        return $this->morphTo();
     }
 
     public function user(): BelongsTo

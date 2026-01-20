@@ -10,9 +10,26 @@
      x-data="{ 
         copied: false,
         copyToClipboard() {
-            navigator.clipboard.writeText(window.location.href);
-            this.copied = true;
-            setTimeout(() => this.copied = false, 2000);
+            const text = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                });
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                } catch (err) {
+                    console.error('Fallback: Unable to copy', err);
+                }
+                document.body.removeChild(textArea);
+            }
         }
      }">
     

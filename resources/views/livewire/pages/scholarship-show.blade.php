@@ -1,3 +1,26 @@
+@section('meta')
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org/",
+      "@@type": "Scholarship",
+      "name": "{{ $scholarship->title }}",
+      "description": "{{ Str::limit(strip_tags($scholarship->description), 300) }}",
+      "award": {
+        "@@type": "MonetaryAmount",
+        "currency": "{{ $scholarship->currency }}",
+        "value": "{{ $scholarship->award_amount }}"
+      },
+      "provider": {
+        "@@type": "Organization",
+        "name": "{{ $scholarship->provider_name }}"
+      },
+      "validThrough": "{{ $scholarship->primary_deadline?->format('Y-m-d') }}",
+      "educationalLevel": "{{ $scholarship->educationLevels->first()?->name }}",
+      "url": "{{ route('scholarships.show', $scholarship->slug) }}"
+    }
+    </script>
+@endsection
+
 <div class="bg-[#fcfcfd]" x-data="{ 
     scrolled: false,
     scrolledPercentage: 0,
@@ -92,7 +115,7 @@
             />
 
             <!-- Main: Article Content -->
-            <main class="lg:col-span-7 space-y-24">
+            <main class="lg:col-span-7 space-y-16">
                 <!-- Meta Grid -->
                 <!-- Quick Stats Meta Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 not-prose">
@@ -187,13 +210,29 @@
                                                 </svg>
                                             </div>
                                             
-                                            @if($isExpired)
-                                                <span class="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-red-100">Closed</span>
-                                            @elseif($isSoon)
-                                                <span class="px-3 py-1 bg-orange-50 text-orange-600 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-orange-100 animate-pulse">Closing Soon</span>
-                                            @elseif($isPriority)
-                                                <span class="px-3 py-1 bg-primary-600 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-full shadow-md">Priority</span>
-                                            @endif
+                                            <div class="flex flex-col items-end gap-2">
+                                                @if($isExpired)
+                                                    <span class="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-red-100">Closed</span>
+                                                @elseif($isSoon)
+                                                    <span class="px-3 py-1 bg-orange-50 text-orange-600 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-orange-100 animate-pulse">Closing Soon</span>
+                                                @elseif($isPriority)
+                                                    <span class="px-3 py-1 bg-primary-600 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-full shadow-md">Priority</span>
+                                                @endif
+
+                                                @if(!$isExpired && $deadline->date)
+                                                    <button 
+                                                        wire:click="addToCalendar('{{ $deadline->date->format('Y-m-d') }}')"
+                                                        wire:loading.attr="disabled"
+                                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-100 rounded-xl text-[10px] font-bold text-gray-500 hover:text-primary-600 hover:border-primary-100 hover:bg-primary-50 transition-all shadow-sm"
+                                                        title="Add to Google Calendar"
+                                                    >
+                                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z"/>
+                                                        </svg>
+                                                        Sync
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </div>
 
                                         <div>
@@ -224,6 +263,7 @@
 
                 <!-- Action CTA -->
                 <!-- Featured Tips & Articles Slider -->
+                @if($featuredPosts->count() > 0)
                 <div class="space-y-6">
                     <h3 class="text-xl font-bold font-display text-gray-950 px-2 flex items-center gap-3">
                         <span class="w-2 h-8 bg-primary-600 rounded-full"></span>
@@ -231,6 +271,115 @@
                     </h3>
                     <x-widgets.featured-posts-slider :posts="$featuredPosts" />
                 </div>
+                @endif
+
+                <!-- Reviews Section -->
+                <section class="mt-24 space-y-12">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Community Reviews</h2>
+                            <p class="text-gray-500 font-medium">Real feedback from students like you.</p>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <div class="flex items-center gap-1 text-amber-400">
+                                @php $avgRating = $scholarship->reviews->avg('rating') ?: 0; @endphp
+                                @for($i = 1; $i <= 5; $i++)
+                                    <svg class="w-5 h-5 {{ $i <= $avgRating ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                @endfor
+                            </div>
+                            <span class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">{{ $scholarship->reviews->count() }} Reviews</span>
+                        </div>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div class="space-y-8">
+                        @forelse($scholarship->reviews as $review)
+                            <div class="p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600 font-bold overflow-hidden">
+                                            @if($review->is_anonymous)
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                            @else
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($review->user->name) }}&background=eff6ff&color=3b82f6" class="w-full h-full object-cover">
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-900">{{ $review->is_anonymous ? 'Anonymous Student' : $review->user->name }}</h4>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $review->created_at->format('M d, Y') }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-0.5 text-amber-400">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg class="w-4 h-4 {{ $i <= $review->rating ? 'fill-current' : 'text-gray-100 fill-current' }}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 leading-relaxed">{{ $review->comment }}</p>
+                                @if($review->is_verified)
+                                    <div class="mt-4 flex items-center gap-1.5 text-emerald-600">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.64.304 1.24.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        <span class="text-[10px] font-bold uppercase tracking-widest">Verified Reviewer</span>
+                                    </div>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="text-center py-12 bg-gray-50 rounded-[2.5rem] border border-dashed border-gray-200">
+                                <p class="text-gray-500 font-medium">No reviews yet. Be the first to share your experience!</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <!-- Review Form -->
+                    @auth
+                        <div class="mt-16 p-10 bg-gray-900 rounded-[2.5rem] text-white">
+                            <h3 class="text-2xl font-bold font-display mb-2">Share your experience</h3>
+                            <p class="text-gray-400 mb-8 font-medium">How was the application process for this scholarship?</p>
+
+                            <form wire:submit="submitReview" class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Your Rating</label>
+                                    <div class="flex items-center gap-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <button type="button" wire:click="$set('rating', {{ $i }})" class="focus:outline-none transition-transform hover:scale-110">
+                                                <svg class="w-8 h-8 {{ $i <= $rating ? 'text-amber-400 fill-current' : 'text-gray-700 fill-current' }}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                            </button>
+                                        @endfor
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Your Comment</label>
+                                    <textarea wire:model="comment" rows="4" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-gray-600" placeholder="Tell us about the process, requirements, or any tips for other students..."></textarea>
+                                    @error('comment') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <div class="relative">
+                                            <input type="checkbox" wire:model="isAnonymous" class="sr-only">
+                                            <div class="w-10 h-6 bg-gray-700 rounded-full transition-colors group-hover:bg-gray-600 shadow-inner"></div>
+                                            <div class="absolute inset-y-1 left-1 w-4 h-4 bg-white rounded-full transition-transform transform" :class="$wire.isAnonymous ? 'translate-x-4' : ''"></div>
+                                        </div>
+                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Post Anonymously</span>
+                                    </label>
+
+                                    <button type="submit" class="px-8 py-3 bg-primary-600 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20 active:scale-95">
+                                        Submit Review
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @else
+                        <div class="mt-16 p-10 bg-gray-50 rounded-[2.5rem] border border-gray-100 text-center">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Want to share your experience?</h3>
+                            <p class="text-gray-500 mb-8 font-medium">Sign in to your account to leave a review and help other students.</p>
+                            <a href="{{ route('login') }}" class="inline-flex items-center px-8 py-3 bg-gray-900 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-gray-800 transition-all shadow-lg">
+                                Sign In to Review
+                            </a>
+                        </div>
+                    @endauth
+                </section>
 
                 <!-- Primary CTA -->
                 <div class="p-10 bg-primary-950 rounded-xl overflow-hidden relative shadow-2xl group/cta">
@@ -246,7 +395,7 @@
                 </div>
 
                 <!-- Advertisement Section -->
-                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                <div class="bg-gray-50/50 rounded-2xl p-6 border border-gray-100/50">
                     <x-ad position="{{ \App\Enums\AdPosition::IN_TEXT }}" />
                 </div>
             </main>
@@ -267,9 +416,6 @@
                         'linkedin' => '#'
                     ]"
                 />
-
-                <!-- Popular Posts -->
-                {{-- <x-widgets.popular-posts-widget :posts="$popularPosts" title="Trending Insights" /> --}}
 
                 <!-- Categories -->
                 <x-widgets.topics-list :topics="$topics" title="Scholarship Types" />

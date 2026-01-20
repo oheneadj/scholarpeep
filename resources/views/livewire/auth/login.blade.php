@@ -1,6 +1,5 @@
 <x-layouts::auth>
-    <div class="flex flex-col gap-8">
-        <x-auth-header :title="__('Welcome Back')" :description="__('Enter your email and password to access your scholar dashboard')" />
+    <div class="flex flex-col gap-8 bg-white rounded-3xl shadow border border-gray-100 p-8 md:p-10">
 
         <!-- Session Status -->
         <x-auth-session-status :status="session('status')" />
@@ -70,7 +69,7 @@
             </div>
             <div class="relative flex justify-center text-sm font-medium leading-6">
                 <span
-                    class="bg-[#f9fafb] px-4 text-gray-300 font-black uppercase tracking-[0.2em] text-[9px]">{{ __('Secure Sign In') }}</span>
+                    class="bg-white px-4 text-gray-300 font-black uppercase tracking-[0.2em] text-[9px]">{{ __('Secure Sign In') }}</span>
             </div>
         </div>
 

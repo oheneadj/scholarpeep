@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Countries\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
@@ -31,9 +32,12 @@ class CountriesTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalWidth('md')
+                    ->color('primary'),
             ])
             ->toolbarActions([
+                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

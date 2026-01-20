@@ -8,12 +8,16 @@ use App\Models\AffiliateClick;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 #[Layout('layouts.frontend')]
 class ScholarshipShow extends Component
 {
     public Scholarship $scholarship;
     public bool $isSaved = false;
+    public int $rating = 5;
+    public string $comment = '';
+    public bool $isAnonymous = false;
 
     public function mount(Scholarship $scholarship)
     {
@@ -22,6 +26,10 @@ class ScholarshipShow extends Component
         }
 
         $this->scholarship->load(['countries', 'educationLevels', 'fieldsOfStudy', 'scholarshipTypes', 'deadlines', 'requirements']);
+        
+        $this->scholarship->load(['reviews' => function ($query) {
+            $query->where('status', 'approved')->latest();
+        }, 'reviews.user']);
 
         if (auth()->check()) {
             $this->isSaved = auth()->user()->savedScholarships()
@@ -43,7 +51,7 @@ class ScholarshipShow extends Component
             'referrer' => request()->header('referer'),
         ]);
 
-        $this->scholarship->increment('views_count');
+        $this->scholarship->increment('views_count', 1);
     }
 
     protected function addToRecentlyViewed()
@@ -59,6 +67,31 @@ class ScholarshipShow extends Component
         $recent = array_slice($recent, 0, 10);
 
         session()->put('recently_viewed_scholarships', $recent);
+    }
+
+    public function addToCalendar($deadlineDate)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+        
+        if (!$user->google_calendar_token) {
+            $this->dispatch('notify', message: 'Please connect your Google Calendar in settings first.');
+            return;
+        }
+
+        $calendarService = app(\App\Services\GoogleCalendarService::class);
+        $date = \Carbon\Carbon::parse($deadlineDate);
+        
+        $eventLink = $calendarService->createDeadlineEvent($user, $this->scholarship, $date);
+
+        if ($eventLink) {
+            $this->dispatch('notify', message: 'Deadline added to your Google Calendar!');
+        } else {
+            $this->dispatch('notify', message: 'Failed to add deadline to calendar. Please check your connection.');
+        }
     }
 
     public function toggleSave()
@@ -96,15 +129,42 @@ class ScholarshipShow extends Component
         }
     }
 
+    public function submitReview()
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $this->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        $this->scholarship->reviews()->create([
+            'user_id' => auth()->id(),
+            'rating' => $this->rating,
+            'comment' => $this->comment,
+            'is_anonymous' => $this->isAnonymous,
+            'status' => 'pending', // Requires admin approval
+        ]);
+
+        $this->reset(['rating', 'comment', 'isAnonymous']);
+        $this->dispatch('notify', message: 'Review submitted! It will appear once approved by an admin.');
+    }
+
     public function apply()
     {
         AffiliateClick::create([
-            'scholarship_id' => $this->scholarship->id,
+            'clickable_id' => $this->scholarship->id,
+            'clickable_type' => Scholarship::class,
             'user_id' => auth()->id(),
             'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'referrer' => request()->header('referer'),
+            'created_at' => now(),
         ]);
 
-        $this->scholarship->increment('clicks_count');
+        $this->scholarship->increment('clicks_count', 1);
 
         return redirect()->away($this->scholarship->application_url);
     }
@@ -129,9 +189,29 @@ class ScholarshipShow extends Component
 
     public function render()
     {
-        // Build related scholarships query with smart matching
-        $query = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
+        // Collaborative Filtering: Get other scholarships viewed by users who viewed this one
+        $userIds = \App\Models\ScholarshipView::where('scholarship_id', $this->scholarship->id)
+            ->whereNotNull('user_id')
+            ->distinct()
+            ->pluck('user_id');
+
+        $alsoViewedIds = \App\Models\ScholarshipView::whereIn('user_id', $userIds)
+            ->where('scholarship_id', '!=', $this->scholarship->id)
+            ->groupBy('scholarship_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->take(6)
+            ->pluck('scholarship_id');
+
+        // Build related scholarships query
+        $query = Scholarship::where('status', '=', \App\Enums\ScholarshipStatus::ACTIVE)
             ->where('id', '!=', $this->scholarship->id);
+
+        if ($alsoViewedIds->isNotEmpty()) {
+            $cases = $alsoViewedIds->map(function ($id, $index) {
+                return "WHEN {$id} THEN {$index}";
+            })->implode(' ');
+            $query->orderByRaw("CASE id {$cases} ELSE 999 END ASC");
+        }
 
         // If user is logged in, exclude already saved scholarships and use preferences
         if (auth()->check()) {
@@ -146,22 +226,22 @@ class ScholarshipShow extends Component
             
             if ($preferences) {
                 // Match by user's preferred countries, education levels, fields, or types
-                $query->where(function ($q) use ($preferences) {
+                $query->where(function ($q) use ($preferences, $user) {
                     if ($preferences->country_ids && count($preferences->country_ids) > 0) {
-                        $q->orWhereHas('countries', function ($countryQuery) use ($preferences) {
+                        $q->orWhereHas('countries', function ($countryQuery) use ($preferences, $user) {
                             $countryQuery->whereIn('countries.id', $preferences->country_ids);
                         });
                     }
                     
                     if ($preferences->education_level_ids && count($preferences->education_level_ids) > 0) {
-                        $q->orWhereHas('educationLevels', function ($levelQuery) use ($preferences) {
+                        $q->orWhereHas('educationLevels', function ($levelQuery) use ($preferences, $user) {
                             $levelQuery->whereIn('education_levels.id', $preferences->education_level_ids);
                         });
                     }
                     
                     if ($preferences->field_of_study_ids && count($preferences->field_of_study_ids) > 0) {
-                        $q->orWhereHas('fieldsOfStudy', function ($fieldQuery) use ($preferences) {
-                            $fieldQuery->whereIn('fields_of_study.id', $preferences->field_of_study_ids);
+                        $q->orWhereHas('fieldsOfStudy', function ($fieldQuery) use ($preferences, $user) {
+                            $fieldQuery->whereIn('field_of_studies.id', $preferences->field_of_study_ids);
                         });
                     }
                     
@@ -196,7 +276,7 @@ class ScholarshipShow extends Component
                 $excludeIds = array_merge($excludeIds, $savedIds);
             }
             
-            $fillScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
+            $fillScholarships = Scholarship::where('status', '=', \App\Enums\ScholarshipStatus::ACTIVE)
                 ->whereNotIn('id', $excludeIds)
                 ->with(['countries', 'educationLevels', 'scholarshipTypes'])
                 ->orderByDesc('created_at')
@@ -207,9 +287,9 @@ class ScholarshipShow extends Component
             $similarScholarships = $similarScholarships->merge($fillScholarships);
         }
 
-        $featuredScholarships = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)
+        $featuredScholarships = Scholarship::where('status', '=', \App\Enums\ScholarshipStatus::ACTIVE)
             ->where('id', '!=', $this->scholarship->id)
-            ->where('sponsorship_tier', \App\Enums\SponsorshipTier::FEATURED)
+            ->where('sponsorship_tier', '=', \App\Enums\SponsorshipTier::FEATURED)
             ->latest()
             ->take(3)
             ->get();
@@ -226,6 +306,15 @@ class ScholarshipShow extends Component
             ->get();
 
         $topics = \App\Models\ScholarshipType::all();
+
+        $image = $this->scholarship->provider_logo ? (Str::startsWith($this->scholarship->provider_logo, 'http') ? $this->scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($this->scholarship->provider_logo)) : null;
+
+        app(\App\Services\MetaService::class)->setMeta(
+            title: $this->scholarship->title,
+            description: Str::limit(strip_tags($this->scholarship->description), 160),
+            image: $image,
+            type: 'article'
+        );
 
         return view('livewire.pages.scholarship-show', [
             'similarScholarships' => $similarScholarships,

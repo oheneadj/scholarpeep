@@ -16,6 +16,10 @@ class EditBlogPost extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make(),
+            \Filament\Actions\Action::make('preview')
+                ->url(fn () => route('blog.show', $this->record->slug))
+                ->openUrlInNewTab()
+                ->icon('heroicon-o-eye'),
         ];
     }
 }

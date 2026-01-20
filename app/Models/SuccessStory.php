@@ -45,4 +45,15 @@ class SuccessStory extends Model
     {
         return $query->where('is_approved', true);
     }
+
+    public function getPhotoUrlAttribute(): string
+    {
+        if ($this->student_photo) {
+            return \Illuminate\Support\Str::contains($this->student_photo, 'http')
+                ? $this->student_photo
+                : \Illuminate\Support\Facades\Storage::url($this->student_photo);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->student_name) . '&color=3b82f6&background=eff6ff';
+    }
 }

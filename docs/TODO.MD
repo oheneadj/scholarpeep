@@ -257,7 +257,7 @@
 - [x] Add email notification toggles
 - [x] Add frequency selector (Instant, Daily, Weekly)
 - [x] Add deadline reminder days slider (1-30)
-- [ ] Test preference saving and loading
+- [x] Test preference saving and loading
 
 ---
 

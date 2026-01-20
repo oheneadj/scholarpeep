@@ -13,7 +13,7 @@
             <a href="{{ route('blog.show', $popular->slug) }}" class="group flex gap-4 items-start">
                 <div
                     class="w-20 h-20 shrink-0 rounded-2xl bg-gray-50 overflow-hidden relative border border-gray-100 shadow-inner">
-                    <img src="{{ Str::startsWith($popular->featured_image, 'http') ? $popular->featured_image : \Illuminate\Support\Facades\Storage::url($popular->featured_image) }}"
+                    <img src="{{ Str::contains($popular->featured_image, 'http') ? $popular->featured_image : \Illuminate\Support\Facades\Storage::url($popular->featured_image) }}"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         alt="{{ $popular->title }}">
                 </div>

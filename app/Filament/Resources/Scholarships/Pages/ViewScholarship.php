@@ -14,6 +14,17 @@ class ViewScholarship extends ViewRecord
     {
         return [
             EditAction::make(),
+            \Filament\Actions\Action::make('preview')
+                ->url(fn () => route('scholarships.show', $this->record->slug))
+                ->openUrlInNewTab()
+                ->icon('heroicon-o-eye'),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\IndividualScholarshipStatsWidget::class,
         ];
     }
 }

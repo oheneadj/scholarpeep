@@ -15,15 +15,18 @@ class FieldOfStudyForm
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('e.g. Computer Science')
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
                         \Filament\Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('e.g. computer-science')
                             ->unique(ignoreRecord: true),
                         \Filament\Forms\Components\Select::make('parent_id')
                             ->relationship('parent', 'name')
                             ->searchable()
+                            ->placeholder('Select Parent Category')
                             ->preload(),
                     ]),
             ]);

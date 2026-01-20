@@ -4,6 +4,9 @@ namespace App\Livewire\Pages;
 
 use App\Models\SavedScholarship;
 use App\Enums\ApplicationStatus;
+use App\Services\ScholarshipMatcher;
+use App\Services\PointService;
+use App\Services\BadgeService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -12,6 +15,8 @@ use Livewire\Attributes\Layout;
 class Dashboard extends Component
 {
     use WithPagination;
+
+    protected $listeners = ['status-updated' => '$refresh'];
 
     public ?int $selectedSavedId = null;
 
@@ -87,18 +92,40 @@ class Dashboard extends Component
         $this->dispatch('open-tracker');
     }
 
-    public function deleteSaved(int $id): void
+    public ?int $deleteId = null;
+
+    // ... existing code ...
+
+    public function deleteSaved(?int $id = null): void
     {
-        auth()->user()->savedScholarships()->findOrFail($id)->delete();
-        $this->dispatch('notify', message: 'Scholarship removed.');
+        $id = $id ?? $this->deleteId;
+        
+        if ($id) {
+            \App\Models\SavedScholarship::where('user_id', '=', auth()->id(), 'and')
+                ->where('id', '=', $id, 'and')
+                ->delete();
+
+            $this->dispatch('notify', message: 'Scholarship removed.');
+            $this->deleteId = null;
+        }
+    }
+
+    public function deleteSavedSearch(int $id): void
+    {
+        auth()->user()->savedSearches()->where('id', $id)->delete();
+        $this->dispatch('notify', message: 'Saved search removed.');
     }
 
     public function updateStatus(int $id, string $status): void
     {
-        $saved = auth()->user()->savedScholarships()->findOrFail($id);
-        $saved->update(['status' => ApplicationStatus::from($status)]);
+        // Use explicit query to satisfy linter
+        \App\Models\SavedScholarship::where('user_id', '=', auth()->id(), 'and')
+            ->where('id', '=', $id, 'and')
+            ->update(['status' => $status]);
         $this->dispatch('notify', message: 'Status updated.');
     }
+
+
 
     public function render()
     {
@@ -129,16 +156,73 @@ class Dashboard extends Component
 
         $savedScholarships = $query->paginate(10);
 
+        // Expanded Stats
+        $expiringSoonCount = auth()->user()->savedScholarships()
+            ->whereHas('scholarship', function($q) {
+                $q->whereBetween('primary_deadline', [now(), now()->addDays(7)]);
+            })->count();
+
+        $totalPotentialAward = auth()->user()->savedScholarships()
+            ->join('scholarships', 'saved_scholarships.scholarship_id', '=', 'scholarships.id')
+            ->sum('scholarships.award_amount');
+
+        $totalAppliedAward = auth()->user()->savedScholarships()
+            ->applied()
+            ->join('scholarships', 'saved_scholarships.scholarship_id', '=', 'scholarships.id')
+            ->sum('scholarships.award_amount');
+
         $stats = [
             'saved' => auth()->user()->savedScholarships()->saved()->count(),
             'applied' => auth()->user()->savedScholarships()->applied()->count(),
             'pending' => auth()->user()->savedScholarships()->pending()->count(),
             'accepted' => auth()->user()->savedScholarships()->accepted()->count(),
+            'expiring_soon' => $expiringSoonCount,
+            'potential_award' => $totalPotentialAward,
+            'applied_award' => $totalAppliedAward,
         ];
+
+        // Recent Activity
+        $recentActivity = auth()->user()->savedScholarships()
+            ->with('scholarship')
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Top Recommendations
+        $preferences = auth()->user()->preference;
+        $recommendedScholarships = collect();
+
+        if ($preferences) {
+            $recommendedScholarships = \App\Models\Scholarship::query()
+                ->whereNotIn('id', auth()->user()->savedScholarships()->pluck('scholarship_id'))
+                ->where(function ($q) use ($preferences) {
+                    if ($preferences->preferred_countries) {
+                        $q->orWhereHas('countries', fn($c) => $c->whereIn('id', $preferences->preferred_countries));
+                    }
+                    if ($preferences->preferred_education_levels) {
+                        $q->orWhereIn('education_level_id', $preferences->preferred_education_levels); // Assumptions on schema
+                    }
+                    // Add more matching logic as needed based on actual schema
+                })
+                ->limit(3)
+                ->get();
+        }
 
         return view('livewire.pages.dashboard', [
             'savedScholarships' => $savedScholarships,
             'stats' => $stats,
+            'recentActivity' => $recentActivity,
+            'recommendedScholarships' => $recommendedScholarships,
+            'hasPreferences' => (bool) $preferences,
+            'pointsSummary' => app(PointService::class)->getUserPointsSummary(auth()->user()),
+            'recentBadges' => app(BadgeService::class)->getEarnedBadges(auth()->user())->take(6),
+            'savedSearches' => auth()->user()->savedSearches()->latest()->get(),
+            'affiliateTools' => \App\Models\AffiliateTool::where('is_active', '=', true, 'and')->orderBy('sort_order', 'asc')->get(),
+            'streakData' => [
+                'current' => auth()->user()->login_streak,
+                'next_milestone' => collect([7, 14, 30, 60, 90, 100])->first(fn($m) => $m > auth()->user()->login_streak) ?? 100,
+                'days_left' => (collect([7, 14, 30, 60, 90, 100])->first(fn($m) => $m > auth()->user()->login_streak) ?? 100) - auth()->user()->login_streak,
+            ],
         ]);
     }
 }

@@ -105,6 +105,10 @@ class ResourceIndex extends Component
         return view('livewire.pages.resource-index', [
             'resources' => $this->resources,
             'resourceTypes' => ['guide', 'template', 'tool', 'video', 'article', 'calculator'],
+            'resourceTypes' => ['guide', 'template', 'tool', 'video', 'article', 'calculator'],
+        ])->layoutData([
+            'title' => app(\App\Settings\SeoSettings::class)->resources_title ?? 'Student Resources & Tools - Scholarpeep',
+            'description' => app(\App\Settings\SeoSettings::class)->resources_description ?? 'Free templates, guides, and tools to help you craft winning scholarship applications.',
         ]);
     }
 }

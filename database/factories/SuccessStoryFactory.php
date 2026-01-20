@@ -22,7 +22,7 @@ class SuccessStoryFactory extends Factory
             'title' => $this->faker->sentence,
             'story' => $this->faker->paragraph,
             'student_name' => $this->faker->name,
-            'student_photo' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=200',
+            'student_photo' => 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', // Better portrait
             'university' => $this->faker->company . ' University',
             'country' => $this->faker->country,
             'is_featured' => $this->faker->boolean(30),

@@ -133,8 +133,8 @@ class Home extends Component
             ->get();
 
         $countries = \App\Models\Country::whereHas('scholarships', function ($q) {
-            $q->where('status', \App\Enums\ScholarshipStatus::ACTIVE);
-        })->get();
+            $q->where('status', '=', \App\Enums\ScholarshipStatus::ACTIVE);
+        })->get(['*']);
 
         $scholarshipTypes = \App\Models\ScholarshipType::all();
         $fieldsOfStudy = \App\Models\FieldOfStudy::whereNull('parent_id')->get();
@@ -144,10 +144,15 @@ class Home extends Component
         $testimonials = \App\Models\SuccessStory::approved()
             ->featured()
             ->latest()
-            ->take(5)
+            ->take(15) // Increased to show more in carousel
             ->get();
 
+        $scholarshipCount = Scholarship::where('status', \App\Enums\ScholarshipStatus::ACTIVE)->count();
+        $userCount = \App\Models\User::count();
+
         return view('livewire.pages.home', [
+            'scholarshipCount' => $scholarshipCount,
+            'userCount' => $userCount,
             'premiumScholarships' => $premiumScholarships,
             'featuredScholarships' => $featuredScholarships,
             'typeSectionScholarships' => $typeSectionScholarships,
@@ -164,6 +169,10 @@ class Home extends Component
             'popularTypes' => $popularTypes,
             'similarScholarships' => $featuredScholarships, // Temporary placeholder for read next
             'testimonials' => $testimonials,
+            'testimonials' => $testimonials,
+        ])->layoutData([
+            'title' => app(\App\Settings\SeoSettings::class)->home_title ?? 'Find Your Dream Scholarship - Scholarpeep',
+            'description' => app(\App\Settings\SeoSettings::class)->home_description ?? 'Discover thousands of verified international scholarships, grants, and financial aid opportunities. Start your study abroad journey today.',
         ]);
     }
 }

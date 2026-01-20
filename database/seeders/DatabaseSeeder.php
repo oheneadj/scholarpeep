@@ -25,5 +25,11 @@ class DatabaseSeeder extends Seeder
         $this->call(ScholarshipSeeder::class);
         $this->call(BlogPostSeeder::class);
         $this->call(SuccessStorySeeder::class);
+        
+        // Seed additional content
+        $this->call(EmailTemplateSeeder::class);
+        $this->call(FaqSeeder::class);
+        $this->call(ResourceSeeder::class);
+        $this->call(SuperAdminSeeder::class);
     }
 }

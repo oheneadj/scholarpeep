@@ -16,11 +16,15 @@ class SavedScholarship extends Model
         'scholarship_id',
         'status',
         'notes',
+        'applied_at',
         'last_notified_at',
+        'google_event_id',
     ];
 
     protected $casts = [
         'status' => \App\Enums\ApplicationStatus::class,
+        'applied_at' => 'datetime',
+        'last_notified_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -41,26 +45,26 @@ class SavedScholarship extends Model
     // Query Scopes
     public function scopeByStatus($query, \App\Enums\ApplicationStatus $status)
     {
-        return $query->where('status', $status);
+        return $query->where($this->getTable() . '.status', $status);
     }
 
     public function scopeSaved($query)
     {
-        return $query->where('status', \App\Enums\ApplicationStatus::SAVED);
+        return $query->where($this->getTable() . '.status', \App\Enums\ApplicationStatus::SAVED);
     }
 
     public function scopeApplied($query)
     {
-        return $query->where('status', \App\Enums\ApplicationStatus::APPLIED);
+        return $query->where($this->getTable() . '.status', \App\Enums\ApplicationStatus::APPLIED);
     }
 
     public function scopePending($query)
     {
-        return $query->where('status', \App\Enums\ApplicationStatus::PENDING);
+        return $query->where($this->getTable() . '.status', \App\Enums\ApplicationStatus::PENDING);
     }
 
     public function scopeAccepted($query)
     {
-        return $query->where('status', \App\Enums\ApplicationStatus::ACCEPTED);
+        return $query->where($this->getTable() . '.status', \App\Enums\ApplicationStatus::ACCEPTED);
     }
 }

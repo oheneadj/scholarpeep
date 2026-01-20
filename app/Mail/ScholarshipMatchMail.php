@@ -25,10 +25,12 @@ class ScholarshipMatchMail extends Mailable
     /**
      * Get the message envelope.
      */
-    public function __construct_envelope(): Envelope
+    public function envelope(): Envelope
     {
+        $template = \App\Models\EmailTemplate::getBySlug('scholarship-match');
+        
         return new Envelope(
-            subject: '🎓 New Scholarship Matches Found for You',
+            subject: $template?->subject ?? '🎓 New Scholarship Matches Found for You',
         );
     }
 
@@ -37,8 +39,17 @@ class ScholarshipMatchMail extends Mailable
      */
     public function content(): Content
     {
+        $template = \App\Models\EmailTemplate::getBySlug('scholarship-match');
+
         return new Content(
-            view: 'emails.scholarship-match',
+            view: 'emails.dynamic',
+            with: [
+                'content' => \Illuminate\Support\Facades\Blade::render(
+                    $template?->content ?? '',
+                    ['user' => $this->user, 'scholarships' => $this->scholarships]
+                ),
+                'preheader' => $template?->preheader,
+            ],
         );
     }
 

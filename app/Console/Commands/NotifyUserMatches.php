@@ -79,11 +79,11 @@ class NotifyUserMatches extends Command
 
     protected function findMatchesForUser(User $user)
     {
-        $preferences = $user->preferences;
+        $preferences = $user->preference;
         $lastSentAt = $preferences->last_match_notification_sent_at ?? Carbon::now()->subDays(30);
 
-        $query = Scholarship::where('status', ScholarshipStatus::ACTIVE->value)
-            ->where('created_at', '>', $lastSentAt);
+        $query = Scholarship::where('status', '=', ScholarshipStatus::ACTIVE, 'and')
+            ->where('created_at', '>', $lastSentAt, 'and');
 
         // Filter by Country
         if (!empty($preferences->preferred_countries)) {

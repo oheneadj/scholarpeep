@@ -1,6 +1,5 @@
 <x-layouts::auth>
-    <div class="flex flex-col gap-8">
-        <x-auth-header :title="__('Create an account')" :description="__('Join Scholarpeep to start tracking and applying for life-changing scholarships')" />
+    <div class="flex flex-col gap-8 bg-white rounded-3xl shadow border border-gray-100 p-8 md:p-10">
 
         <!-- Session Status -->
         <x-auth-session-status :status="session('status')" />
@@ -74,7 +73,7 @@
             </div>
             <div class="relative flex justify-center text-sm font-medium leading-6">
                 <span
-                    class="bg-[#f9fafb] px-4 text-gray-300 font-black uppercase tracking-[0.2em] text-[9px]">{{ __('Fast Onboarding') }}</span>
+                    class="bg-white px-4 text-gray-300 font-black uppercase tracking-[0.2em] text-[9px]">{{ __('Fast Onboarding') }}</span>
             </div>
         </div>
 

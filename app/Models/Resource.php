@@ -12,15 +12,33 @@ class Resource extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'description',
+        'content',
         'resource_type',
+        'category',
+        'difficulty_level',
+        'featured_image',
         'file_path',
         'external_url',
         'is_active',
+        'is_featured',
+        'is_published',
+        'views_count',
+        'downloads_count',
+        'meta_title',
+        'meta_description',
+        'published_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_featured' => 'boolean',
+        'is_published' => 'boolean',
+        'category' => \App\Enums\ResourceCategory::class,
+        'difficulty_level' => \App\Enums\DifficultyLevel::class,
+        'resource_type' => \App\Enums\ResourceType::class,
+        'published_at' => 'datetime',
     ];
 
     /**
@@ -30,19 +48,35 @@ class Resource extends Model
     {
         parent::boot();
 
-        static::creating(function ($resource) {
-            if (empty($resource->slug)) {
-                $resource->slug = Str::slug($resource->title);
+        static::saving(function ($resource) {
+            if (empty($resource->slug) || $resource->isDirty('title')) {
+                $slug = Str::slug($resource->title);
+                $originalSlug = $slug;
+                $count = 1;
+
+                while (static::where('slug', $slug)->where('id', '!=', $resource->id)->exists()) {
+                    $slug = $originalSlug . '-' . $count++;
+                }
+
+                $resource->slug = $slug;
             }
         });
     }
 
     /**
-     * Get slug attribute
+     * Get all views for this resource
      */
-    public function getSlugAttribute()
+    public function views()
     {
-        return Str::slug($this->title);
+        return $this->hasMany(ResourceView::class);
+    }
+
+    /**
+     * Get all downloads for this resource
+     */
+    public function downloads()
+    {
+        return $this->hasMany(ResourceDownload::class);
     }
 
     /**
@@ -51,6 +85,22 @@ class Resource extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope: Published resources
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
+    /**
+     * Scope: Featured resources
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
     }
 
     /**
@@ -65,6 +115,28 @@ class Resource extends Model
     }
 
     /**
+     * Scope: Filter by category
+     */
+    public function scopeByCategory($query, $category)
+    {
+        if ($category) {
+            return $query->where('category', $category);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Filter by difficulty
+     */
+    public function scopeByDifficulty($query, $difficulty)
+    {
+        if ($difficulty) {
+            return $query->where('difficulty_level', $difficulty);
+        }
+        return $query;
+    }
+
+    /**
      * Scope: Search
      */
     public function scopeSearch($query, $search)
@@ -72,7 +144,8 @@ class Resource extends Model
         if ($search) {
             return $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
         return $query;

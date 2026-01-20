@@ -28,8 +28,14 @@ class DeadlineReminderMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $template = \App\Models\EmailTemplate::getBySlug('deadline-reminder');
+        $subject = \Illuminate\Support\Facades\Blade::render($template?->subject ?? '', [
+            'scholarship' => $this->scholarship,
+            'days_left' => $this->days_left,
+        ]);
+
         return new Envelope(
-            subject: "⏳ Deadline Reminder: {$this->scholarship->title}",
+            subject: $subject ?: "⏳ Deadline Reminder: {$this->scholarship->title}",
         );
     }
 
@@ -38,8 +44,21 @@ class DeadlineReminderMail extends Mailable
      */
     public function content(): Content
     {
+        $template = \App\Models\EmailTemplate::getBySlug('deadline-reminder');
+
         return new Content(
-            view: 'emails.deadline-reminder',
+            view: 'emails.dynamic',
+            with: [
+                'content' => \Illuminate\Support\Facades\Blade::render(
+                    $template?->content ?? '',
+                    [
+                        'user' => $this->user,
+                        'scholarship' => $this->scholarship,
+                        'days_left' => $this->days_left
+                    ]
+                ),
+                'preheader' => $template?->preheader,
+            ],
         );
     }
 

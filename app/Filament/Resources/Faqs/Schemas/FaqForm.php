@@ -17,7 +17,7 @@ class FaqForm
                 TextInput::make('question')
                     ->required()
                     ->maxLength(255)
-                    ->placeholder('e.g., How do I reset my password?')
+                    ->placeholder('e.g. How do I reset my password?')
                     ->columnSpanFull(),
                 RichEditor::make('answer')
                     ->required()

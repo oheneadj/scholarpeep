@@ -3,19 +3,18 @@
     <!-- Hero Section (Featured Post) -->
     <!-- Hero Section (Featured Slider) -->
     @if($featuredPosts->count() > 0)
-        <section class="relative bg-white border-b border-gray-100 overflow-hidden group"
-            x-data="{ 
-                                                                                                                                                    activeSlide: 0, 
-                                                                                                                                                    slides: {{ $featuredPosts->count() }},
-                                                                                                                                                    timer: null,
-                                                                                                                                                    next() { this.activeSlide = (this.activeSlide + 1) % this.slides },
-                                                                                                                                                    prev() { this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides },
-                                                                                                                                                    startTimer() { this.timer = setInterval(() => this.next(), 6000) },
-                                                                                                                                                    stopTimer() { clearInterval(this.timer) }
-                                                                                                                                                 }" x-init="startTimer()" @mouseenter="stopTimer()"
-            @mouseleave="startTimer()">
+        <section class="relative bg-white border-b border-gray-100 overflow-hidden group" x-data="{ 
+                    activeSlide: 0, 
+                    slides: {{ $featuredPosts->count() }},
+                    timer: null,
+                    next() { this.activeSlide = (this.activeSlide + 1) % this.slides },
+                    prev() { this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides },
+                    startTimer() { this.timer = setInterval(() => this.next(), 6000) },
+                    stopTimer() { clearInterval(this.timer) }
+                }" x-init="startTimer()" @mouseenter="stopTimer()" @mouseleave="startTimer()">
 
-            <div class="absolute inset-0 bg-blob-purple opacity-5 pointer-events-none transform scale-150"></div>
+            <div class="absolute inset-0 bg-primary-50/30 opacity-20 pointer-events-none transform scale-150 blur-3xl">
+            </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
                 <div class="relative min-h-[500px] md:min-h-[400px]">
@@ -41,7 +40,7 @@
                                 </div>
 
                                 <h1
-                                    class="text-4xl md:text-6xl font-black text-gray-900 font-display leading-[1.1] tracking-tight hover:text-primary-600 transition-colors duration-300">
+                                    class="text-4xl md:text-6xl font-bold text-gray-900 leading-[1.1] tracking-tight hover:text-primary-600 transition-colors duration-300">
                                     <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
                                 </h1>
 
@@ -51,20 +50,21 @@
 
                                 <div class="flex items-center gap-4 pt-4">
                                     <img src="{{ $post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name) }}"
-                                        class="w-12 h-12 rounded-full ring-4 ring-gray-50 shadow-sm">
+                                        class="w-12 h-12 rounded-full ring-4 ring-gray-50 shadow-sm border border-white">
                                     <div>
                                         <p class="font-bold text-gray-900">{{ $post->author->name }}</p>
-                                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Editor in Chief</p>
+                                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Scholarpeep
+                                            Editorial</p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Image -->
                             <div
-                                class="relative aspect-[4/3] md:aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 group/image">
+                                class="relative aspect-[4/3] md:aspect-square rounded-2xl overflow-hidden shadow-2xl border border-gray-100 group/image">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-60">
                                 </div>
-                                <img src="{{ Str::startsWith($post->featured_image, 'http') ? $post->featured_image : \Illuminate\Support\Facades\Storage::url($post->featured_image) }}"
+                                <img src="{{ $post->featured_image_url }}"
                                     class="w-full h-full object-cover transform group-hover/image:scale-110 transition-transform duration-[1.5s]">
 
                                 <div class="absolute bottom-8 right-8 z-20">
@@ -92,7 +92,8 @@
                             </svg>
                         </button>
 
-                        <div class="flex gap-2.5 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                        <div
+                            class="flex gap-2.5 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 shadow-sm">
                             <template x-for="i in slides" :key="i">
                                 <button @click="activeSlide = i - 1"
                                     class="h-1.5 rounded-full transition-all duration-500 relative overflow-hidden"

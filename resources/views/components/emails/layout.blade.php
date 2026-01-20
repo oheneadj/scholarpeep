@@ -95,8 +95,34 @@
                 background-color: #1d4ed8 !important;
                 border-color: #1d4ed8 !important;
             }
+
+            h1 {
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 700 !important;
+                color: #111827 !important;
+                font-size: 24px !important;
+                margin-bottom: 24px !important;
+                line-height: 1.25 !important;
+            }
+
+            h2 {
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 600 !important;
+                color: #1f2937 !important;
+                font-size: 20px !important;
+                margin-top: 32px !important;
+                margin-bottom: 16px !important;
+            }
+
+            p {
+                margin-bottom: 24px !important;
+            }
         }
     </style>
+    <!-- PRE-LOAD FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
 
 <body
@@ -124,16 +150,82 @@
                     </div>
 
                     <table class="main"
-                        style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 24px; shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+                        style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+                        <!-- BRAND ACCENT BAR -->
+                        <tr>
+                            <td
+                                style="background: linear-gradient(90deg, #2563eb 0%, #9333ea 100%); height: 6px; font-size: 0; line-height: 0;">
+                                &nbsp;</td>
+                        </tr>
                         <!-- START MAIN CONTENT AREA -->
                         <tr>
                             <td class="wrapper"
-                                style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 40px;">
+                                style="font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; vertical-align: top; box-sizing: border-box; padding: 40px; color: #374151;">
                                 <table border="0" cellpadding="0" cellspacing="0"
                                     style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                                     <tr>
-                                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
+                                        <td
+                                            style="font-family: 'Inter', sans-serif; font-size: 16px; vertical-align: top;">
                                             {{ $slot }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- MARKETING / DISCOVERY SECTION -->
+                        <tr>
+                            <td style="background-color: #f3f4f6; padding: 30px 40px; border-top: 1px solid #e5e7eb;">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td style="text-align: center; padding-bottom: 20px;">
+                                            <h3
+                                                style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 18px; color: #111827; font-weight: 600;">
+                                                Unleash Your Potential 🚀</h3>
+                                            <p style="margin: 5px 0 0; font-size: 14px; color: #6b7280;">Discover tools
+                                                to supercharge your journey.</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            <table border="0" cellspacing="0" cellpadding="0">
+                                                <tr>
+                                                    <td style="padding: 0 10px; text-align: center;">
+                                                        <a href="{{ route('scholarships.index') }}"
+                                                            style="display: inline-block; text-decoration: none;">
+                                                            <div
+                                                                style="background: #white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 15px; background-color: #ffffff;">
+                                                                <span style="display: block; font-size: 20px;">🎓</span>
+                                                                <span
+                                                                    style="display: block; font-size: 12px; color: #374151; font-weight: 600; margin-top: 4px;">Scholarships</span>
+                                                            </div>
+                                                        </a>
+                                                    </td>
+                                                    <td style="padding: 0 10px; text-align: center;">
+                                                        <a href="{{ route('blog.index') }}"
+                                                            style="display: inline-block; text-decoration: none;">
+                                                            <div
+                                                                style="background: #white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 15px; background-color: #ffffff;">
+                                                                <span style="display: block; font-size: 20px;">💡</span>
+                                                                <span
+                                                                    style="display: block; font-size: 12px; color: #374151; font-weight: 600; margin-top: 4px;">Expert
+                                                                    Tips</span>
+                                                            </div>
+                                                        </a>
+                                                    </td>
+                                                    <td style="padding: 0 10px; text-align: center;">
+                                                        <a href="{{ route('resources.index') }}"
+                                                            style="display: inline-block; text-decoration: none;">
+                                                            <div
+                                                                style="background: #white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 15px; background-color: #ffffff;">
+                                                                <span style="display: block; font-size: 20px;">🎒</span>
+                                                                <span
+                                                                    style="display: block; font-size: 12px; color: #374151; font-weight: 600; margin-top: 4px;">Resources</span>
+                                                            </div>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                 </table>

@@ -42,4 +42,15 @@ class BlogPost extends Model
         return $query->where('is_published', true)
             ->where('published_at', '<=', now());
     }
+
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        if ($this->featured_image) {
+            return \Illuminate\Support\Str::contains($this->featured_image, 'http')
+                ? $this->featured_image
+                : \Illuminate\Support\Facades\Storage::url($this->featured_image);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->title) . '&color=3b82f6&background=eff6ff';
+    }
 }

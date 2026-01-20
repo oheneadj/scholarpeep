@@ -2,14 +2,16 @@
 
 namespace App\Filament\Resources\BlogPosts\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action as Preview;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Tables\Columns\ImageColumn;
 
 class BlogPostsTable
 {
@@ -19,18 +21,11 @@ class BlogPostsTable
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                ImageColumn::make('featured_image'),
-                TextColumn::make('author.name')
-                    ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('meta_title')
-                    ->searchable(),
                 TextColumn::make('views_count')
                     ->numeric()
                     ->sortable(),
@@ -42,13 +37,24 @@ class BlogPostsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('author.name')
+                       ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+                
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->color('gray'),
+                EditAction::make()
+                    ->color('primary'),
+                Preview::make('preview')
+                    ->url(fn ($record) => route('blog.show', $record->slug))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-eye')
+                    ->color('success'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

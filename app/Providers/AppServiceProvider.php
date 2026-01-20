@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\App\Services\MetaService::class);
     }
 
     /**
@@ -24,6 +24,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerObservers();
+    }
+
+    /**
+     * Register model observers
+     */
+    protected function registerObservers(): void
+    {
+        \App\Models\SavedScholarship::observe(\App\Observers\SavedScholarshipObserver::class);
+        \App\Models\ResourceDownload::observe(\App\Observers\ResourceDownloadObserver::class);
+        \App\Models\BlogPostView::observe(\App\Observers\BlogPostViewObserver::class);
     }
 
     protected function configureDefaults(): void

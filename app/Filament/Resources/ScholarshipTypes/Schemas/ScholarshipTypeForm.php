@@ -15,11 +15,13 @@ class ScholarshipTypeForm
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('e.g. Full Scholarship')
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
                         \Filament\Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('e.g. full-scholarship')
                             ->unique(ignoreRecord: true),
                     ]),
             ]);

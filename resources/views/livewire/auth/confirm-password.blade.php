@@ -1,28 +1,34 @@
 <x-layouts::auth>
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Confirm Password')" :description="__('This is a secure area of the application. Please confirm your password before continuing to ensure your account security.')" />
+    <div class="flex flex-col gap-8 bg-white rounded-3xl shadow border border-gray-100 p-8 md:p-10">
+        <div class="space-y-2">
+            <h1 class="text-2xl font-black text-gray-900 tracking-tight">{{ __('Confirm Password') }}</h1>
+            <p class="text-sm text-gray-500 font-medium">
+                {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+            </p>
+        </div>
 
         <x-auth-session-status :status="session('status')" />
 
-        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-5">
+        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-6">
             @csrf
 
             <!-- Password -->
-            <div class="space-y-1">
-                <label for="password" class="block text-sm font-medium text-gray-700">
+            <div class="space-y-2">
+                <label for="password"
+                    class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">
                     {{ __('Password') }}
                 </label>
                 <input type="password" id="password" name="password" required autocomplete="current-password"
                     placeholder="••••••••" autofocus
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all @error('password') border-error-500 ring-error-500 @enderror">
+                    class="w-full px-6 py-4 border border-gray-200 rounded-full focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all @error('password') border-error-500 ring-error-500 @enderror text-sm font-bold placeholder-gray-300">
                 @error('password')
-                    <p class="text-xs text-error-600 font-medium mt-1">{{ $message }}</p>
+                    <p class="text-[10px] text-error-600 font-black uppercase tracking-widest mt-2 ml-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="pt-2">
                 <button type="submit"
-                    class="w-full bg-primary-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow active:scale-[0.98]"
+                    class="w-full bg-primary-600 text-white px-8 py-4 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-500/50 transition-all shadow-xl shadow-primary-600/10 active:scale-[0.98]"
                     data-test="confirm-password-button">
                     {{ __('Confirm') }}
                 </button>

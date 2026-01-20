@@ -94,7 +94,8 @@ class AdsTable
                     ->falseLabel('Inactive only'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

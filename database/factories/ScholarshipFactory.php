@@ -17,7 +17,7 @@ class ScholarshipFactory extends Factory
         return [
             'title' => $title,
             'slug' => Str::slug($title) . '-' . $this->faker->unique()->randomNumber(5),
-            'description' => 'The ' . $title . ' is a prestigious award designed to support exceptional students who demonstrate academic excellence and leadership potential. This scholarship provides significant financial assistance and access to a global network of scholars.',
+            'description' => $this->faker->paragraph(3),
             'eligibility_criteria' => "- Minimum GPA of 3.5 or equivalent\n- Demonstrated leadership through extracurricular activities\n- Strong commitment to community service\n- Proof of enrollment in an accredited institution",
             'provider_name' => $this->faker->company() . ' Foundation',
             'provider_logo' => 'https://ui-avatars.com/api/?name=' . urlencode($title) . '&background=random',

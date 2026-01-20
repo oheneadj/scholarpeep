@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\FieldOfStudies;
 
-use App\Filament\Resources\FieldOfStudies\Pages\CreateFieldOfStudy;
-use App\Filament\Resources\FieldOfStudies\Pages\EditFieldOfStudy;
 use App\Filament\Resources\FieldOfStudies\Pages\ListFieldOfStudies;
 use App\Filament\Resources\FieldOfStudies\Schemas\FieldOfStudyForm;
 use App\Filament\Resources\FieldOfStudies\Tables\FieldOfStudiesTable;
@@ -43,8 +41,7 @@ class FieldOfStudyResource extends Resource
     {
         return [
             'index' => ListFieldOfStudies::route('/'),
-            'create' => CreateFieldOfStudy::route('/create'),
-            'edit' => EditFieldOfStudy::route('/{record}/edit'),
+
         ];
     }
 }

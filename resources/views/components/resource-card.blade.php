@@ -22,34 +22,40 @@
         'calculator' => 'indigo',
     ];
 
-    $color = $typeColors[$resource->resource_type] ?? 'gray';
-    $url = $resource->external_url ?: ($resource->file_path ? asset('storage/' . $resource->file_path) : '#');
+    $typeValue = $resource->resource_type instanceof \App\Enums\ResourceType ? $resource->resource_type->value : $resource->resource_type;
+    $color = $typeColors[$typeValue] ?? 'gray';
+    
+    // Use the tracking routes to enable metric recording
+    $url = route('resources.show', $resource);
     $isAuthenticated = auth()->check();
+
+    // Check if resource is less than 30 days old
+    $isNew = $resource->created_at->gt(now()->subDays(30));
 @endphp
 
-<div class="group bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
+<div class="group bg-white rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
     
     {{-- Card Header --}}
-    <div class="p-6 pb-4">
-        <div class="flex items-start justify-between mb-4">
+    <div class="p-6 flex-1">
+        <div class="flex items-start justify-between mb-6">
             {{-- Icon --}}
-            <div class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center shrink-0">
+            <div class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-gray-200">
                 <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $typeIcons[$resource->resource_type] ?? $typeIcons['article'] }}"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $typeIcons[$typeValue] ?? $typeIcons['article'] }}"/>
                 </svg>
             </div>
             
             {{-- Save Button --}}
             <button wire:click="toggleSave({{ $resource->id }})" 
-                class="group/save px-4 py-2 rounded-lg border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 transition-all flex items-center gap-2">
+                class="group/save px-4 py-2 rounded-xl border border-gray-100 hover:border-primary-100 bg-white hover:bg-primary-50/30 transition-all flex items-center gap-2">
                 @if($isSaved)
-                    <span class="text-sm font-medium text-gray-700">Saved</span>
-                    <svg class="w-4 h-4 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-primary-600">Saved</span>
+                    <svg class="w-3.5 h-3.5 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                     </svg>
                 @else
-                    <span class="text-sm font-medium text-gray-700">Save</span>
-                    <svg class="w-4 h-4 text-gray-400 group-hover/save:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 group-hover/save:text-primary-600">Save</span>
+                    <svg class="w-3.5 h-3.5 text-gray-300 group-hover/save:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                     </svg>
                 @endif
@@ -57,57 +63,51 @@
         </div>
 
         {{-- Resource Type & Date --}}
-        <div class="mb-3">
-            <h4 class="text-base font-semibold text-gray-900 mb-1">{{ ucfirst($resource->resource_type) }}</h4>
-            <p class="text-sm text-gray-500">{{ $resource->created_at->diffForHumans() }}</p>
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-[10px] font-bold text-primary-600 uppercase tracking-widest">
+                {{ $resource->resource_type instanceof \App\Enums\ResourceType ? $resource->resource_type->label() : ucfirst($resource->resource_type) }}
+            </span>
+            <span class="w-1 h-1 rounded-full bg-gray-200"></span>
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $resource->created_at->diffForHumans() }}</span>
         </div>
 
         {{-- Title --}}
-        <h3 class="text-xl font-bold text-gray-900 mb-4 line-clamp-2 leading-tight">
+        <h3 class="text-xl font-bold text-gray-900 mb-4 line-clamp-2 leading-tight tracking-tight group-hover:text-primary-600 transition-colors">
             {{ $resource->title }}
         </h3>
 
         {{-- Tags --}}
-        <div class="flex flex-wrap gap-2 mb-4">
-            <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium border border-gray-200">
-                {{ ucfirst($resource->resource_type) }}
-            </span>
-            @if($resource->resource_type === 'guide')
-                <span class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-100">
-                    Senior level
-                </span>
-            @elseif($resource->resource_type === 'template')
-                <span class="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium border border-purple-100">
-                    Flexible
-                </span>
-            @elseif($resource->resource_type === 'tool')
-                <span class="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-medium border border-emerald-100">
-                    Free Access
-                </span>
-            @elseif($resource->resource_type === 'video')
-                <span class="px-3 py-1.5 bg-rose-50 text-rose-700 rounded-lg text-sm font-medium border border-rose-100">
-                    Remote
+        <div class="flex flex-wrap gap-2 mb-6">
+            @if($isNew)
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-md shadow-primary-200">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    New
                 </span>
             @endif
+            <span class="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-gray-100">
+                {{ $resource->resource_type instanceof \App\Enums\ResourceType ? $resource->resource_type->label() : ucfirst($resource->resource_type) }}
+            </span>
         </div>
 
         @if($resource->description)
-            <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+            <p class="text-sm text-gray-500 font-medium line-clamp-2 leading-relaxed">
                 {{ $resource->description }}
             </p>
         @endif
     </div>
 
     {{-- Card Footer --}}
-    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+    <div class="px-6 py-5 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between mt-auto">
         {{-- Price/Access Info --}}
         <div>
             @auth
-                <p class="text-sm text-gray-500 mb-0.5">Free Access</p>
-                <p class="text-lg font-bold text-gray-900">Available Now</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Free Access</p>
+                <p class="text-sm font-bold text-gray-900">Available Now</p>
             @else
-                <p class="text-sm text-gray-500 mb-0.5">Sign up required</p>
-                <p class="text-lg font-bold text-gray-900">Free</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Membership Required</p>
+                <p class="text-sm font-bold text-gray-900">Sign up Free</p>
             @endguest
         </div>
 
@@ -115,16 +115,16 @@
         @auth
             <a href="{{ $url }}" 
                target="{{ $resource->external_url ? '_blank' : '_self' }}"
-               class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95">
+               class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-md shadow-primary-200 active:scale-95">
                 Access now
             </a>
         @else
             <a href="{{ route('register') }}" 
-               class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center gap-2">
+               class="px-6 py-2.5 bg-gray-900 hover:bg-black text-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                Sign up to access
+                Unlock
             </a>
         @endguest
     </div>

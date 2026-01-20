@@ -16,15 +16,18 @@ class ScholarshipForm
                             ->schema([
                                 \Filament\Forms\Components\TextInput::make('title')
                                     ->required()
+                                    ->placeholder('e.g. Gates Cambridge Scholarship')
                                     ->maxLength(255)
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
                                 \Filament\Forms\Components\TextInput::make('slug')
                                     ->required()
+                                    ->placeholder('e.g. gates-cambridge-scholarship')
                                     ->maxLength(255)
                                     ->unique(ignoreRecord: true),
                                 \Filament\Forms\Components\TextInput::make('provider_name')
                                     ->required()
+                                    ->placeholder('e.g. Bill & Melinda Gates Foundation')
                                     ->maxLength(255),
                                 \Filament\Forms\Components\FileUpload::make('provider_logo')
                                     ->image()
@@ -36,17 +39,22 @@ class ScholarshipForm
                                     ->helperText('Upload a featured image for this scholarship (recommended: 1200x600px)'),
                                 \Filament\Forms\Components\RichEditor::make('description')
                                     ->required()
+                                    ->placeholder('Detailed description of the scholarship...')
                                     ->columnSpanFull(),
                                 \Filament\Forms\Components\RichEditor::make('eligibility_criteria')
                                     ->required()
+                                    ->placeholder('e.g. Must be a citizen of...')
                                     ->columnSpanFull(),
                                 \Filament\Forms\Components\TextInput::make('award_amount')
+                                    ->placeholder('e.g. 50000')
                                     ->numeric(),
                                 \Filament\Forms\Components\TextInput::make('currency')
                                     ->default('USD')
+                                    ->placeholder('USD')
                                     ->maxLength(10),
                                 \Filament\Forms\Components\TextInput::make('application_url')
                                     ->url()
+                                    ->placeholder('https://gatescambridge.org/apply')
                                     ->maxLength(255),
                                 \Filament\Forms\Components\DatePicker::make('primary_deadline'),
                                 \Filament\Forms\Components\Toggle::make('is_rolling')

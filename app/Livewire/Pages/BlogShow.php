@@ -4,7 +4,11 @@ namespace App\Livewire\Pages;
 
 use App\Models\BlogPost;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
+use Livewire\Attributes\Layout;
+
+#[Layout('layouts.frontend')]
 class BlogShow extends Component
 {
     public BlogPost $post;
@@ -20,8 +24,16 @@ class BlogShow extends Component
         
         // Increment views
         $this->post->increment('views_count', 1);
-    }
 
+        // Record detailed view for analytics
+        \App\Models\BlogPostView::create([
+            'blog_post_id' => $post->id,
+            'user_id' => auth()->id()?? null,
+            'ip_address' => request()->ip(),    
+            'user_agent' => request()->userAgent(),
+            'referrer' => request()->header('referer'),
+        ]);
+    }
     public function render()
     {
         // Popular Posts for Sidebar
@@ -40,7 +52,7 @@ class BlogShow extends Component
 
         // Featured Posts for Sidebar Slider
         $featuredPosts = BlogPost::published()
-            ->where('is_featured', true) // Assuming is_featured column exists, otherwise fallback to latest
+            ->where('is_featured', true)
             ->where('id', '!=', $this->post->id)
             ->latest()
             ->take(5)
@@ -64,14 +76,21 @@ class BlogShow extends Component
 
         $topics = \App\Models\ScholarshipType::all();
 
+
+
+        app(\App\Services\MetaService::class)->setMeta(
+            title: $this->post->meta_title ?? $this->post->title,
+            description: $this->post->meta_description ?? Str::limit(strip_tags($this->post->content), 160),
+            image: $this->post->featured_image ? \Illuminate\Support\Facades\Storage::url($this->post->featured_image) : null,
+            type: 'article'
+        );
+
         return view('livewire.pages.blog-show', [
             'popularPosts' => $popularPosts,
             'relatedPosts' => $relatedPosts,
             'featuredPosts' => $featuredPosts,
             'featuredScholarships' => $featuredScholarships,
             'topics' => $topics,
-        ])
-            ->layout('layouts.frontend')
-            ->title($this->post->meta_title ?? $this->post->title);
+        ]);
     }
 }

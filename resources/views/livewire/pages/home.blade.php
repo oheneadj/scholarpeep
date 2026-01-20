@@ -1,111 +1,181 @@
 <div class="space-y-24 pb-24" x-data="{ premiumIndex: 0, premiumCount: {{ $premiumScholarships->count() }} }"
     x-init="if(premiumCount > 0) setInterval(() => { premiumIndex = (premiumIndex + 1) % premiumCount }, 30000)">
     <!-- Hero Section -->
-    <section class="relative bg-white pt-20 pb-32 overflow-hidden">
-        <div class="absolute inset-0 z-0 h-full w-full overflow-hidden pointer-events-none">
-            <div class="absolute top-[-10%] right-[-10%] w-[800px] h-[800px] bg-blob-blue opacity-60"></div>
-            <div class="absolute bottom-0 left-[-10%] w-[600px] h-[600px] bg-blob-pink opacity-40"></div>
-            <div class="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-blob-yellow opacity-30"></div>
+    <section class="relative min-h-[90vh] flex items-center pt-24 pb-32 overflow-hidden bg-white"
+        x-data="{ visible: false }" x-init="setTimeout(() => visible = true, 100)">
+
+        <!-- Premium Multi-layered Background -->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <!-- Animated Mesh Gradients -->
+            <div
+                class="absolute top-[-20%] right-[-10%] w-[1000px] h-[1000px] bg-primary-100/40 rounded-full blur-[120px] animate-pulse-slow">
+            </div>
+            <div
+                class="absolute bottom-[-10%] left-[-5%] w-[800px] h-[800px] bg-soft-purple/30 rounded-full blur-[120px] animate-pulse-slow delay-1000">
+            </div>
+            <div
+                class="absolute top-[20%] left-[15%] w-[500px] h-[500px] bg-primary-50/50 rounded-full blur-[100px] animate-bounce duration-[15s]">
+            </div>
         </div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-12 lg:gap-12">
-                <div
-                    class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-8 lg:text-left flex flex-col justify-center">
-                    <span
-                        class="inline-flex items-center space-x-2 bg-primary-50 text-primary-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-6 w-fit shadow-sm border border-primary-100">
-                        <span class="relative flex h-2 w-2">
-                            <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-600"></span>
+            <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
+
+                <!-- Hero Content -->
+                <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-center">
+
+                    <!-- Announcement Badge -->
+                    <div x-show="visible" x-transition:enter="transition ease-out duration-1000 delay-100"
+                        x-transition:enter-start="opacity-0 translate-y-4" class="mb-8">
+                        <span
+                            class="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-50 to-white text-primary-700 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-sm border border-primary-100">
+                            <span class="relative flex h-2 w-2">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-600"></span>
+                            </span>
+                            <span>{{ number_format($scholarshipCount) }}+ New Scholarships Added Recently</span>
                         </span>
-                        <span>1,200+ New Scholarships Added This Month</span>
-                    </span>
-                    <h1
-                        class="text-4xl tracking-tight font-bold text-gray-900 sm:text-5xl md:text-6xl lg:text-5xl xl:text-7xl font-display leading-[1.1]">
-                        <span class="block">Your Future Doesn't</span>
-                        <span class="block text-primary-600">Have to be Expensive.</span>
+                    </div>
+
+                    <!-- Main Heading -->
+                    <h1 x-show="visible" x-transition:enter="transition ease-out duration-1000 delay-300"
+                        x-transition:enter-start="opacity-0 translate-y-8"
+                        class="text-4xl sm:text-7xl xl:text-8xl font-black text-gray-950 font-display leading-[1.05] tracking-tight mb-8">
+                        Your Future <br />
+                        <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">Doesn't
+                            Have</span> <br />
+                        To Be Expensive.
                     </h1>
-                    <p class="mt-6 text-lg text-gray-500 sm:text-xl leading-relaxed max-w-2xl">
-                        Find and apply to thousands of scholarships tailored to your background, interests, and
-                        educational goals. Simplified discovery for the modern student.
+
+                    <!-- Subtitle -->
+                    <p x-show="visible" x-transition:enter="transition ease-out duration-1000 delay-500"
+                        x-transition:enter-start="opacity-0 translate-y-8"
+                        class="text-xl text-gray-500 leading-relaxed max-w-2xl mb-12 font-medium">
+                        Unlock global opportunities with high-impact scholarships tailored for your academic brilliance.
+                        Simplified discovery, verified sources, and expert guidance.
                     </p>
-                    <div class="mt-10 sm:max-w-xl sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+
+                    <!-- Glassmorphism Search Bar -->
+                    <div x-show="visible" x-transition:enter="transition ease-out duration-1000 delay-700"
+                        x-transition:enter-start="opacity-0 scale-95" class="max-w-2xl">
                         <form action="{{ route('scholarships.index') }}" method="GET"
-                            class="mt-3 flex flex-col sm:flex-row gap-3">
+                            class="relative flex flex-col sm:flex-row gap-4 p-2 bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-white shadow-2xl shadow-primary-900/10 hover:shadow-primary-900/20 transition-all duration-500">
                             <div class="flex-1 relative group">
-                                <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors"
+                                <div
+                                    class="absolute inset-y-0 left-6 flex items-center pointer-events-none transition-transform group-focus-within:scale-110">
+                                    <svg class="h-6 w-6 text-primary-400 group-focus-within:text-primary-600"
                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                                 <input id="search" name="q" type="text"
                                     placeholder="Degree, Field of study, or Keywords"
-                                    class="block w-full pl-14 pr-5 py-4 text-base text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-full shadow-sm focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none">
+                                    class="block w-full pl-16 pr-6 py-5 text-lg text-gray-900 placeholder-gray-400 bg-white shadow-inner border border-gray-100 rounded-[2rem] focus:ring-4 focus:ring-primary-500/5 focus:border-primary-400 transition-all outline-none">
                             </div>
                             <button type="submit"
-                                class="px-8 py-4 rounded-full shadow-lg shadow-primary-600/20 text-white bg-primary-600 font-bold hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-500/50 transition-all active:scale-[0.98]">
-                                Find Scholarships
+                                class="px-10 py-5 rounded-[2rem] shadow-xl shadow-primary-600/30 text-white bg-primary-600 font-bold hover:bg-primary-700 hover:shadow-primary-600/40 transform hover:-translate-y-1 transition-all active:scale-[0.95] flex items-center justify-center gap-2">
+                                <span>Search</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
                             </button>
                         </form>
-                        <div class="mt-10 flex flex-wrap items-center gap-3">
-                            <span class="text-xs font-bold text-blue-400 uppercase tracking-widest mr-2">Quick
-                                Filters:</span>
 
-                            {{-- Popular Countries --}}
-                            @foreach ($popularCountries as $country)
+                        <!-- Enhanced Quick Filters -->
+                        <div class="mt-8 flex flex-wrap items-center gap-3 px-2">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mr-2">Top
+                                Destinations:</span>
+                            @foreach ($popularCountries->take(4) as $country)
                                 <a href="{{ route('scholarships.index', ['country' => $country->slug]) }}"
-                                    class="group px-4 py-2 bg-white text-blue-600 rounded-full text-xs font-bold ring-1 ring-gray-200 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                                    class="group px-4 py-2 bg-white/60 backdrop-blur-md rounded-full text-xs font-bold text-gray-600 border border-gray-100 hover:border-primary-300 hover:bg-white hover:text-primary-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2 active:scale-95">
                                     <x-dynamic-component :component="'flag-country-' . $country->iso_alpha2"
-                                        class="w-4 h-4 rounded-full  group-hover:grayscale-0 transition-all" />
+                                        class="w-4 h-4 rounded-full shadow-sm" />
                                     {{ $country->name }}
-                                </a>
-                            @endforeach
-
-                            {{-- Popular Education Levels --}}
-                            @foreach ($popularLevels as $level)
-                                <a href="{{ route('scholarships.index', ['level' => $level->slug]) }}"
-                                    class="px-4 py-2 bg-white text-blue-600 rounded-full text-xs font-bold ring-1 ring-gray-200 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-all shadow-sm hover:shadow-md">
-                                    {{ $level->name }}
-                                </a>
-                            @endforeach
-
-                            {{-- Popular Scholarship Types --}}
-                            @foreach ($popularTypes as $type)
-                                <a href="{{ route('scholarships.index', ['types' => [$type->slug]]) }}"
-                                    class="px-4 py-2 bg-white text-blue-600 rounded-full text-xs font-bold ring-1 ring-gray-200 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-all shadow-sm hover:shadow-md">
-                                    {{ $type->name }}
                                 </a>
                             @endforeach
                         </div>
                     </div>
                 </div>
-                <div class="mt-16 relative lg:mt-0 lg:col-span-4 hidden lg:block">
-                    <div class="relative w-full aspect-square flex items-center justify-center">
-                        <div class="absolute inset-0 bg-blob-blue opacity-50 scale-150 rounded-full blur-3xl"></div>
-                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"
-                            class="relative z-10 w-full h-auto rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500"
-                            alt="Students collaborating">
+
+                <!-- Right Visual: Dynamic Premium Carousel -->
+                <div class="lg:col-span-5 xl:col-span-4 hidden lg:block relative" x-show="visible"
+                    x-transition:enter="transition ease-out duration-1000 delay-1000"
+                    x-transition:enter-start="opacity-0 translate-x-12">
+                    <div class="relative w-full aspect-[4/5] flex items-center justify-center">
+                        <div
+                            class="absolute inset-0 bg-primary-500 opacity-20 scale-110 rounded-full blur-[100px] animate-pulse">
+                        </div>
+
+                        <!-- Carousel Slides -->
+                        <div class="relative z-10 w-full h-[500px]">
+                            @foreach($premiumScholarships as $index => $premium)
+                                <div x-show="premiumIndex === {{ $index }}"
+                                    x-transition:enter="transition ease-out duration-700"
+                                    x-transition:enter-start="opacity-0 scale-95 translate-x-8"
+                                    x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                    x-transition:leave="transition ease-in duration-500"
+                                    x-transition:leave-start="opacity-100 scale-100 translate-x-0"
+                                    x-transition:leave-end="opacity-0 scale-95 -translate-x-8" class="absolute inset-0">
+                                    <x-scholarship-card :scholarship="$premium" view="grid"
+                                        class="h-full border-2 border-purple-500 shadow-2xl shadow-purple-950/20" />
+
+                                    <!-- Premium Floating Badge -->
+                                    <div
+                                        class="absolute -top-4 -right-4 bg-purple-600 text-white p-3 rounded-2xl shadow-xl animate-bounce-slow z-20">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            @if($premiumScholarships->isEmpty())
+                                <div class="relative w-full h-full flex items-center justify-center">
+                                    <div
+                                        class="absolute top-[10%] left-0 w-3/4 aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white -rotate-6 transform hover:rotate-0 transition-all duration-700">
+                                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <div
+                                        class="absolute bottom-[5%] right-0 w-3/4 aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white rotate-12 transform hover:rotate-0 transition-all duration-700 delay-150">
+                                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Carousel Indicators -->
+                        @if($premiumScholarships->count() > 1)
+                            <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+                                @foreach($premiumScholarships as $index => $premium)
+                                    <button @click="premiumIndex = {{ $index }}"
+                                        class="h-1.5 transition-all duration-500 rounded-full"
+                                        :class="premiumIndex === {{ $index }} ? 'w-8 bg-purple-600' : 'w-2 bg-gray-300 hover:bg-gray-400'"></button>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    </section>
-
     <!-- Country Carousel -->
     @if($countries->count() > 0)
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[-4rem] relative z-20">
             <div x-data="{ 
-                                                scroll: 0, 
-                                                max: 0,
-                                                updateMax() { 
-                                                    this.max = $refs.container.scrollWidth - $refs.container.clientWidth 
-                                                } 
-                                            }" x-init="updateMax()" @resize.window="updateMax()" class="relative group">
+                                                                                            scroll: 0, 
+                                                                                            max: 0,
+                                                                                            updateMax() { 
+                                                                                                this.max = $refs.container.scrollWidth - $refs.container.clientWidth 
+                                                                                            } 
+                                                                                        }" x-init="updateMax()"
+                @resize.window="updateMax()" class="relative group">
                 <div x-ref="container" class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-8 pt-4">
                     @foreach($countries as $country)
                         <a href="{{ route('scholarships.index', ['country' => $country->slug]) }}" class="flex-none w-40 group">
@@ -194,7 +264,7 @@
                         @foreach($scholarshipTypes as $type)
                             <button type="button" wire:click.prevent="setType('{{ $type->slug }}')"
                                 class="px-6 py-3 rounded-full text-sm font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5
-                                                                                                                                                                                                                                                    {{ $selectedTypeSlug === $type->slug ? 'ring-4 ring-offset-2 ring-primary-200 scale-105 ' . $colors[$loop->index % count($colors)] : 'bg-white border border-blue-200 text-gray-600 hover:text-white ' . str_replace('text-white', '', $colors[$loop->index % count($colors)]) }}">
+                                                                                                                                                                                                                                                                                                {{ $selectedTypeSlug === $type->slug ? 'ring-4 ring-offset-2 ring-primary-200 scale-105 ' . $colors[$loop->index % count($colors)] : 'bg-white border border-blue-200 text-gray-600 hover:text-white ' . str_replace('text-white', '', $colors[$loop->index % count($colors)]) }}">
                                 {{ $type->name }}
                             </button>
                         @endforeach
@@ -215,59 +285,140 @@
     </section>
 
     <!-- Visual Banner / CTA -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ mouseX: 0, mouseY: 0 }"
-        @mousemove="mouseX = $event.clientX; mouseY = $event.clientY">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden py-12" x-data="{ 
+            mouseX: 0, 
+            mouseY: 0,
+            isVisible: false 
+        }" @mousemove="mouseX = $event.clientX; mouseY = $event.clientY" x-intersect.once="isVisible = true">
+
         <div
-            class="relative rounded-3xl overflow-hidden bg-gray-900 px-8 py-16 md:px-20 md:py-24 flex flex-col md:flex-row items-center justify-between gap-12 group shadow-2xl border border-white/10 isolate">
+            class="relative rounded-[3rem] overflow-hidden bg-gray-950 px-8 py-16 md:px-20 md:py-24 flex flex-col lg:flex-row items-center justify-between gap-16 group shadow-2xl border border-white/10 isolate">
 
-            <!-- Interactive Background Elements -->
-            <div
-                class="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-900 to-primary-950 opacity-90 transition-opacity duration-500">
+            <!-- Premium Animated Background -->
+            <div class="absolute inset-0 z-0">
+                <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-600 opacity-20 rounded-full blur-[120px] animate-pulse-slow transition-transform duration-1000"
+                    :style="`transform: translate(${mouseX * -0.01}px, ${mouseY * -0.01}px)`"></div>
+                <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600 opacity-20 rounded-full blur-[120px] animate-pulse-slow transition-transform duration-1000"
+                    :style="`transform: translate(${mouseX * 0.01}px, ${mouseY * 0.01}px)`"></div>
             </div>
-
-            <!-- Parallax blobs -->
-            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/30 rounded-full blur-[120px] mix-blend-screen transition-transform duration-75 ease-out"
-                :style="`transform: translate(${mouseX * -0.02}px, ${mouseY * -0.02}px)`"></div>
-            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/30 rounded-full blur-[100px] mix-blend-screen transition-transform duration-75 ease-out"
-                :style="`transform: translate(${mouseX * 0.02}px, ${mouseY * 0.02}px)`"></div>
 
             <!-- Pattern Overlay -->
-            <div class="absolute inset-0 opacity-[0.03] text-white"
-                style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'currentColor\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')">
+            <div class="absolute inset-0 opacity-[0.05] pointer-events-none"
+                style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')">
             </div>
 
-            <div class="relative z-10 max-w-2xl text-center md:text-left">
+            <div class="relative z-10 max-w-2xl text-center lg:text-left" x-show="isVisible"
+                x-transition:enter="transition ease-out duration-1000"
+                x-transition:enter-start="opacity-0 translate-y-12" x-transition:enter-end="opacity-100 translate-y-0">
+
                 <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-primary-200 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md border border-white/10">
-                    <span class="w-2 h-2 rounded-full bg-success-500 animate-pulse"></span>
-                    Updated Daily
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-primary-200 text-xs font-bold uppercase tracking-widest mb-8">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-success-500"></span>
+                    </span>
+                    Smart AI Matching Engine
                 </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-display tracking-tight">
-                    Can't find your <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary-200 to-purple-200">perfect
+
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-8 leading-[1.1] font-display tracking-tight">
+                    Can't find your <br>
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-purple-400 to-primary-400 bg-[length:200%_auto] animate-gradient">perfect
                         match?</span>
                 </h2>
-                <p class="text-primary-100 text-lg opacity-90 leading-relaxed font-light">
-                    Our experts add hundreds of new scholarships every single day. Tell us your background, and our AI
-                    will notify you the moment a matching opportunity arrives.
+
+                <p class="text-primary-100/80 text-xl leading-relaxed font-medium mb-12">
+                    Our AI scans thousands of new opportunities daily across 150+ countries. Tell us your story, and
+                    we'll bring the perfect scholarships directly to your inbox.
                 </p>
+
+                <div class="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start">
+                    <a href="{{ route('register') }}"
+                        class="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-primary-950 font-black rounded-[2rem] text-lg shadow-2xl hover:shadow-primary-500/20 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 overflow-hidden">
+                        <span>Get Personalized Matches</span>
+                        <div
+                            class="w-8 h-8 rounded-full bg-primary-900 text-white flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </div>
+                    </a>
+                    <div class="flex -space-x-3 items-center">
+                        @for($i = 1; $i <= 4; $i++)
+                            <img class="w-10 h-10 rounded-full border-4 border-gray-900"
+                                src="https://i.pravatar.cc/150?u={{ $i }}" alt="Student">
+                        @endfor
+                        <span class="pl-6 text-sm font-bold text-primary-200/60">Joined by
+                            {{ number_format($userCount) }}+ students</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="relative z-10 shrink-0">
-                <a href="#"
-                    class="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-primary-900 font-bold rounded-full text-lg shadow-xl hover:shadow-2xl hover:bg-primary-50 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-                    <span
-                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></span>
-                    <span>Get Personalized Matches</span>
+            <!-- Visual Asset: Glassmorphic Match Card -->
+            <div class="relative z-10 hidden lg:block" x-show="isVisible"
+                x-transition:enter="transition ease-out duration-1000 delay-300"
+                x-transition:enter-start="opacity-0 scale-90 translate-x-12"
+                x-transition:enter-end="opacity-100 scale-100 translate-x-0">
+
+                <div class="relative p-1 animate-float-slow">
                     <div
-                        class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
+                        class="w-[380px] rounded-[2.5rem] bg-white/10 backdrop-blur-2xl border border-white/20 p-8 shadow-2xl shadow-black/40 relative overflow-hidden group/card">
+                        <!-- Card Decorative background -->
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+                        </div>
+
+                        <div class="flex items-start justify-between mb-8">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-primary-400 border border-white/10">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="px-3 py-1 rounded-full bg-success-500/20 text-success-400 text-[10px] font-black uppercase tracking-widest border border-success-500/20">98%
+                                Match</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="h-2 w-24 bg-white/20 rounded-full"></div>
+                            <div class="h-6 w-full bg-white/10 rounded-xl"></div>
+                            <div class="h-6 w-3/4 bg-white/10 rounded-xl"></div>
+                        </div>
+
+                        <div class="mt-10 pt-8 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-primary-500/30"></div>
+                                <div class="w-8 h-8 rounded-lg bg-purple-500/30"></div>
+                            </div>
+                            <div class="h-10 w-24 bg-white rounded-full"></div>
+                        </div>
+
+                        <!-- Sparkle Effects -->
+                        <div class="absolute -bottom-2 -left-2 w-24 h-24 bg-purple-600/30 rounded-full blur-2xl"></div>
                     </div>
-                </a>
-                <p class="mt-4 text-center text-sm text-primary-200/60">Join 25,000+ students today</p>
+
+                    <!-- Small overlapping floating card -->
+                    <div
+                        class="absolute -bottom-6 -left-12 w-48 rounded-2xl bg-white p-4 shadow-2xl transform -rotate-6 border border-gray-100 hidden lg:block group-hover/card:rotate-0 transition-transform duration-500">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-success-100 text-success-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-gray-900 leading-none">APPLICATION</p>
+                                <p class="text-[9px] text-gray-500 font-bold">Matching successful!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -284,7 +435,7 @@
                     @foreach($fieldsOfStudy->take(10) as $field)
                                     <button type="button" wire:click.prevent="setField('{{ $field->slug }}')"
                                         class="flex items-center justify-between p-4 border rounded-2xl w-full text-left transition-all group/field
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedFieldSlug === $field->slug
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedFieldSlug === $field->slug
                         ? 'bg-purple-600 border-purple-600 shadow-xl shadow-purple-900/10'
                         : 'bg-white/80 border-purple-50 hover:bg-white hover:border-purple-200 hover:shadow-lg hover:shadow-purple-900/5' }}">
                                         <span
@@ -293,7 +444,7 @@
                                         </span>
                                         <div
                                             class="w-8 h-8 rounded-full flex items-center justify-center transition-all
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $selectedFieldSlug === $field->slug ? 'bg-white/20 text-white' : 'bg-purple-50 text-purple-400 group-hover/field:bg-purple-100 group-hover/field:text-purple-600' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $selectedFieldSlug === $field->slug ? 'bg-white/20 text-white' : 'bg-purple-50 text-purple-400 group-hover/field:bg-purple-100 group-hover/field:text-purple-600' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 5l7 7-7 7" />
@@ -354,7 +505,7 @@
                     @foreach($educationLevels as $level)
                                     <button type="button" wire:click.prevent="setLevel('{{ $level->slug }}')"
                                         class="px-6 py-3 rounded-full font-bold transition-all border
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedLevelSlug === $level->slug
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedLevelSlug === $level->slug
                         ? 'bg-white text-primary-700 border-white shadow-[0_0_20px_rgba(255,255,255,0.3)] scale-105'
                         : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20' }}">
                                         {{ $level->name }}
@@ -490,35 +641,52 @@
             </div>
 
             @if($testimonials->isNotEmpty())
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($testimonials as $story)
-                        <div
-                            class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full group">
-                            <div class="mb-6 relative">
-                                <svg class="absolute top-0 left-0 transform -translate-x-2 -translate-y-3 w-8 h-8 text-primary-100 opacity-50"
-                                    fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                                    <path
-                                        d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                                </svg>
-                                <p class="text-gray-600 italic leading-relaxed relative z-10 pl-4">"{{ Str::limit($story->story, 150) }}"</p>
-                            </div>
+                <div x-data="{ 
+                                                                        scroll: 0, 
+                                                                        max: 0,
+                                                                        autoplayInterval: null,
+                                                                        paused: false,
+                                                                        updateMax() { 
+                                                                            this.max = $refs.testimonial_container.scrollWidth - $refs.testimonial_container.clientWidth 
+                                                                        },
+                                                                        startAutoplay() {
+                                                                            this.autoplayInterval = setInterval(() => {
+                                                                                if (!this.paused) {
+                                                                                    if ($refs.testimonial_container.scrollLeft + $refs.testimonial_container.clientWidth >= $refs.testimonial_container.scrollWidth) {
+                                                                                        $refs.testimonial_container.scrollLeft = 0;
+                                                                                    } else {
+                                                                                        $refs.testimonial_container.scrollLeft += 1;
+                                                                                    }
+                                                                                }
+                                                                            }, 30);
+                                                                        },
+                                                                        stopAutoplay() {
+                                                                            clearInterval(this.autoplayInterval);
+                                                                        }
+                                                                    }" x-init="updateMax(); startAutoplay()"
+                    @resize.window="updateMa
+                                                  x     ()" @mouseenter="paused = true" @mouseleave="paused = false"
+                    class="relative group">
+                    <div x-ref="testimonial_container"
+                        class="flex gap-6 overflow-x-auto no-scrollbar pb-8 px-4 sm:px-0 scroll-smooth">
+                        @foreach($testimonials as $story)
+                            <x-success-story-card :story="$story" />
+                        @endforeach
+                    </div>
 
-                            <div class="flex items-center gap-4 border-t border-gray-50 pt-6 mt-2">
-                                <div class="relative w-10 h-10 flex-shrink-0">
-                                    <img src="{{ $story->student_photo }}" alt="{{ $story->student_name }}"
-                                        class="w-full h-full rounded-full object-cover border-2 border-white shadow-sm group-hover:border-primary-100 transition-colors">
-                                    <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
-                                        <x-dynamic-component :component="'flag-country-' . Str::lower(\App\Models\Country::where('name', $story->country)->first()?->iso_alpha2 ?? 'us')"
-                                            class="w-3 h-3 rounded-full" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900 text-sm">{{ $story->student_name }}</h4>
-                                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">{{ $story->university }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    <!-- Enhanced Nav Arrows -->
+                    <button @click="$refs.testimonial_container.scrollLeft -= 400"
+                        class="absolute left-[-24px] top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-600 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-30 hidden md:flex">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button @click="$refs.testimonial_container.scrollLeft += 400"
+                        class="absolute right-[-24px] top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-600 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-30 hidden md:flex">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
                 </div>
             @else
                 <div class="text-center py-12">

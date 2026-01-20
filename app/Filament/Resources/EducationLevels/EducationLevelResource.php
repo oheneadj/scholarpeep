@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\EducationLevels;
 
-use App\Filament\Resources\EducationLevels\Pages\CreateEducationLevel;
-use App\Filament\Resources\EducationLevels\Pages\EditEducationLevel;
 use App\Filament\Resources\EducationLevels\Pages\ListEducationLevels;
 use App\Filament\Resources\EducationLevels\Schemas\EducationLevelForm;
 use App\Filament\Resources\EducationLevels\Tables\EducationLevelsTable;
@@ -43,8 +41,7 @@ class EducationLevelResource extends Resource
     {
         return [
             'index' => ListEducationLevels::route('/'),
-            'create' => CreateEducationLevel::route('/create'),
-            'edit' => EditEducationLevel::route('/{record}/edit'),
+
         ];
     }
 }

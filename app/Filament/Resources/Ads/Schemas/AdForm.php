@@ -20,6 +20,7 @@ class AdForm
                     ->schema([
                         TextInput::make('title')
                             ->required()
+                            ->placeholder('e.g. Summer Sale Banner')
                             ->maxLength(255),
                         
                         FileUpload::make('image')
@@ -32,7 +33,7 @@ class AdForm
                             ->imageCropAspectRatio('16:9')
                             ->imageResizeTargetWidth('1920')
                             ->imageResizeTargetHeight('1080')
-                            ->helperText('Image will be enforced to 16:9 aspect ratio. Recommended size: 1920x1080px')
+                            ->helperText('Image will be enforced to 16:9 aspect ratio. WebP format is supported and recommended. Recommended size: 1920x1080px')
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(2048),
                         

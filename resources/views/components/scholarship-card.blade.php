@@ -7,15 +7,57 @@
 @endphp
 
 @if($view === 'grid')
-    <div {{ $attributes->merge(['class' => 'group bg-white rounded-xl border shadow hover:shadow-xl hover:shadow-primary-600/5 hover:-translate-y-1 transition-all duration-500 p-8 flex flex-col h-full relative overflow-hidden cursor-pointer ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }} onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
+    <div {{ $attributes->merge(['class' => 'group bg-white rounded-xl border shadow hover:shadow-xl hover:shadow-primary-600/5 hover:-translate-y-1 transition-all duration-500 p-8 flex flex-col h-full relative overflow-hidden cursor-pointer ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }} x-data="{ 
+                        copied: false,
+                        copyLink() {
+                            const text = '{{ route('scholarships.show', $scholarship->slug) }}';
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(text).then(() => {
+                                    this.copied = true;
+                                    setTimeout(() => this.copied = false, 2000);
+                                });
+                            } else {
+                                const textArea = document.createElement('textarea');
+                                textArea.value = text;
+                                document.body.appendChild(textArea);
+                                textArea.select();
+                                try {
+                                    document.execCommand('copy');
+                                    this.copied = true;
+                                    setTimeout(() => this.copied = false, 2000);
+                                } catch (err) {
+                                    console.error('Fallback: Unable to copy', err);
+                                }
+                                document.body.removeChild(textArea);
+                            }
+                        }
+                    }" onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
         @if(!$isStandard)
             <div @class([
-                'absolute top-0 right-0 py-1.5 px-6 text-white text-[10px] uppercase font-bold tracking-[0.2em] rounded-bl-3xl shadow-md z-10',
-                'bg-purple-600' => $isPremium,
-                'bg-gold-500' => $isFeatured,
+                'absolute top-0 right-0 py-1.5 px-6 text-white text-[10px] uppercase font-black tracking-[0.2em] rounded-bl-3xl shadow-lg z-10 flex items-center gap-2',
+                'bg-gradient-to-r from-purple-600 to-indigo-600' => $isPremium,
+                'bg-gradient-to-r from-gold-500 to-orange-500' => $isFeatured,
             ])>
+                @if($isPremium)
+                    <svg class="w-3 h-3 text-purple-200" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                @else
+                    <svg class="w-3 h-3 text-gold-200" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
+                @endif
                 {{ $scholarship->sponsorship_tier->label() }}
             </div>
+
+            @if($isPremium)
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-indigo-500/5 pointer-events-none">
+                </div>
+                <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none">
+                </div>
+            @endif
         @endif
 
 
@@ -24,7 +66,7 @@
             <div
                 class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center p-3 border border-gray-100 group-hover:border-primary-100 transition-colors shrink-0">
                 @if($scholarship->provider_logo)
-                    <img src="{{ Str::startsWith($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
+                    <img src="{{ Str::contains($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
                         alt="{{ $scholarship->provider_name }}" class="max-h-full max-w-full object-contain">
                 @else
                     <img src="{{ asset('img/placeholder-logo.png') }}" alt="{{ $scholarship->provider_name }}"
@@ -101,6 +143,19 @@
                         </svg>
                     </button>
                 @endauth
+                <button @click.stop="copyLink"
+                    class="p-2 rounded-full bg-gray-50 hover:bg-white border border-transparent hover:border-gray-200 shadow-sm hover:shadow-md transition-all group/copy focus:outline-none"
+                    title="Copy Link">
+                    <svg x-show="!copied" class="w-6 h-6 text-gray-400 group-hover/copy:text-primary-600 transition-colors"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <svg x-show="copied" x-cloak class="w-6 h-6 text-success-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
                 <a href="{{ route('scholarships.show', $scholarship->slug) }}"
                     class="inline-flex items-center justify-center w-12 h-12 bg-gray-950 text-white rounded-full hover:bg-primary-600 transition-all shadow-lg active:scale-95 group/btn">
                     <svg class="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" fill="none"
@@ -113,10 +168,34 @@
         </div>
     </div>
 @else
-    <div {{ $attributes->merge(['class' => 'group bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }}>
+    <div {{ $attributes->merge(['class' => 'group bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }} x-data="{ 
+                        copied: false,
+                        copyLink() {
+                            const text = '{{ route('scholarships.show', $scholarship->slug) }}';
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(text).then(() => {
+                                    this.copied = true;
+                                    setTimeout(() => this.copied = false, 2000);
+                                });
+                            } else {
+                                const textArea = document.createElement('textarea');
+                                textArea.value = text;
+                                document.body.appendChild(textArea);
+                                textArea.select();
+                                try {
+                                    document.execCommand('copy');
+                                    this.copied = true;
+                                    setTimeout(() => this.copied = false, 2000);
+                                } catch (err) {
+                                    console.error('Fallback: Unable to copy', err);
+                                }
+                                document.body.removeChild(textArea);
+                            }
+                        }
+                    }" onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
         <div class="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center p-3 border border-gray-100 shrink-0">
             @if($scholarship->provider_logo)
-                <img src="{{ Str::startsWith($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
+                <img src="{{ Str::contains($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
                     alt="{{ $scholarship->provider_name }}" class="max-h-full max-w-full object-contain">
             @else
                 <img src="{{ asset('img/placeholder-logo.png') }}" alt="{{ $scholarship->provider_name }}"
@@ -129,10 +208,21 @@
                 <h3 class="font-bold text-gray-950 text-xl leading-tight truncate">{{ $scholarship->title }}</h3>
                 @if(!$isStandard)
                     <span @class([
-                        'px-2.5 py-0.5 text-[9px] uppercase font-bold rounded-full',
-                        'bg-purple-100 text-purple-700' => $isPremium,
-                        'bg-gold-100 text-gold-700' => $isFeatured,
+                        'px-2.5 py-1 text-[9px] uppercase font-black rounded-full shadow-sm flex items-center gap-1.5',
+                        'bg-purple-100 text-purple-700 border border-purple-200' => $isPremium,
+                        'bg-gold-100 text-gold-700 border border-gold-200' => $isFeatured,
                     ])>
+                        @if($isPremium)
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        @else
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                            </svg>
+                        @endif
                         {{ $scholarship->sponsorship_tier->label() }}
                     </span>
                 @endif
@@ -189,6 +279,19 @@
                         </svg>
                     </button>
                 @endauth
+                <button @click.stop="copyLink"
+                    class="p-2 rounded-full bg-white hover:bg-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all group/copy focus:outline-none"
+                    title="Copy Link">
+                    <svg x-show="!copied" class="w-5 h-5 text-gray-400 group-hover/copy:text-primary-600 transition-colors"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <svg x-show="copied" x-cloak class="w-5 h-5 text-success-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
                 <a href="{{ route('scholarships.show', $scholarship->slug) }}"
                     class="px-6 py-2.5 bg-gray-950 text-white rounded-full text-xs font-bold hover:bg-primary-600 transition-all active:scale-95 shadow-lg">View
                     Details</a>

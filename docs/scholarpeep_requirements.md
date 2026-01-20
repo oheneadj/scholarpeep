@@ -24,11 +24,7 @@
 - Queue System: Redis (for email notifications and background jobs)
 - Search: Laravel Scout with Meilisearch or Algolia (for fast, typo-tolerant search)
 
-### **Frontend**
-- Blade templates with Alpine.js & Livewire, OR
-- Vue.js/React SPA (choose based on team preference)
-- CSS: Tailwind CSS
-- Icons: Heroicons or Lucide
+
 
 ### **Authentication**
 - Laravel Socialite (Google and Facebook OAuth)

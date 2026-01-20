@@ -11,7 +11,7 @@
 
                 <div class="space-y-6">
                     <label
-                        class="flex items-center justify-between p-6 rounded-3xl bg-gray-50 border border-transparent hover:border-gray-100 transition-all cursor-pointer group has-[:checked]:bg-primary-50/10 has-[:checked]:border-primary-100">
+                        class="flex items-center justify-between p-6 rounded-3xl bg-gray-50 border border-transparent hover:border-gray-100 transition-all cursor-pointer group has-[:checked]:bg-primary-50/10 has-[:checked]:border-primary-100 relative">
                         <div class="flex items-center gap-4">
                             <div
                                 class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary-600 shadow-sm">
@@ -21,9 +21,21 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm font-black text-gray-900">New Scholarship Matches</p>
+                                <p
+                                    class="text-sm font-black text-gray-900 group-hover:text-primary-700 transition-colors">
+                                    New Scholarship Matches</p>
                                 <p class="text-xs text-gray-400 font-bold">Get alerted when a new scholarship matches
                                     your preferences</p>
+                                <button type="button" wire:click.stop.prevent="previewTemplate('new_match')"
+                                    class="mt-2 text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-wider flex items-center gap-1 hover:underline">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Preview Email
+                                </button>
                             </div>
                         </div>
                         <div
@@ -35,7 +47,7 @@
                     </label>
 
                     <label
-                        class="flex items-center justify-between p-6 rounded-3xl bg-gray-50 border border-transparent hover:border-gray-100 transition-all cursor-pointer group has-[:checked]:bg-primary-50/10 has-[:checked]:border-primary-100">
+                        class="flex items-center justify-between p-6 rounded-3xl bg-gray-50 border border-transparent hover:border-gray-100 transition-all cursor-pointer group has-[:checked]:bg-primary-50/10 has-[:checked]:border-primary-100 relative">
                         <div class="flex items-center gap-4">
                             <div
                                 class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-warning-500 shadow-sm">
@@ -45,9 +57,21 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm font-black text-gray-900">Deadline Reminders</p>
+                                <p
+                                    class="text-sm font-black text-gray-900 group-hover:text-primary-700 transition-colors">
+                                    Deadline Reminders</p>
                                 <p class="text-xs text-gray-400 font-bold">Receive alerts before your saved scholarship
                                     deadlines</p>
+                                <button type="button" wire:click.stop.prevent="previewTemplate('deadline')"
+                                    class="mt-2 text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-wider flex items-center gap-1 hover:underline">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Preview Email
+                                </button>
                             </div>
                         </div>
                         <div
@@ -105,10 +129,53 @@
 
             <div class="flex items-center gap-6 pt-4">
                 <button type="submit"
-                    class="px-12 py-5 bg-primary-600 text-white rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary-700 transition-all active:scale-95 shadow-xl shadow-primary-600/10">
-                    {{ __('Save Settings') }}
+                    class="px-12 py-5 bg-primary-600 text-white rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary-700 transition-all active:scale-95 shadow-xl shadow-primary-600/10 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="saveSettings">{{ __('Save Settings') }}</span>
+                    <span wire:loading wire:target="saveSettings">Saving...</span>
+                </button>
+
+                <button type="button" wire:click="sendTestNotification" wire:loading.attr="disabled"
+                    class="px-8 py-5 bg-white text-gray-600 border border-gray-200 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-gray-50 hover:text-gray-900 transition-all active:scale-95 shadow-sm disabled:opacity-50">
+                    <span wire:loading.remove wire:target="sendTestNotification">Send Test Notification</span>
+                    <span wire:loading wire:target="sendTestNotification">Sending...</span>
                 </button>
             </div>
         </form>
     </x-settings.layout>
+
+    {{-- Preview Modal --}}
+    @if($showPreviewModal)
+        <div class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+                    wire:click="$set('showPreviewModal', false)"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div
+                    class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-gray-100">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-black text-gray-900 mb-4 pb-4 border-b border-gray-100"
+                                    id="modal-title">
+                                    {{ $previewSubject }}
+                                </h3>
+                                <div
+                                    class="mt-2 bg-gray-50 rounded-xl p-6 max-h-[60vh] overflow-y-auto border border-gray-100">
+                                    <div class="prose prose-sm max-w-none bg-white p-4 rounded-lg shadow-sm">
+                                        {!! $previewHtml !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3 rounded-b-2xl">
+                        <button type="button" wire:click="$set('showPreviewModal', false)"
+                            class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-3 bg-primary-600 text-base font-bold text-white hover:bg-primary-700 focus:outline-none sm:w-auto sm:text-sm uppercase tracking-wider transform active:scale-95 transition-all">
+                            Close Preview
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

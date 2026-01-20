@@ -57,6 +57,9 @@ class BlogIndex extends Component
             'posts' => $posts,
             'popularPosts' => $popularPosts,
             'categories' => $categories,
-        ])->layout('layouts.frontend');
+        ])->layout('layouts.frontend')->layoutData([
+            'title' => app(\App\Settings\SeoSettings::class)->blog_title ?? 'Scholarship Tips & Guides - Scholarpeep Blog',
+            'description' => app(\App\Settings\SeoSettings::class)->blog_description ?? 'Expert advice, success stories, and guides on how to win scholarships and study abroad.',
+        ]);
     }
 }

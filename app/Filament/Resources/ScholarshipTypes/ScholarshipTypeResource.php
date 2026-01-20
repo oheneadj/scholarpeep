@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\ScholarshipTypes;
 
-use App\Filament\Resources\ScholarshipTypes\Pages\CreateScholarshipType;
-use App\Filament\Resources\ScholarshipTypes\Pages\EditScholarshipType;
 use App\Filament\Resources\ScholarshipTypes\Pages\ListScholarshipTypes;
 use App\Filament\Resources\ScholarshipTypes\Schemas\ScholarshipTypeForm;
 use App\Filament\Resources\ScholarshipTypes\Tables\ScholarshipTypesTable;
@@ -43,8 +41,7 @@ class ScholarshipTypeResource extends Resource
     {
         return [
             'index' => ListScholarshipTypes::route('/'),
-            'create' => CreateScholarshipType::route('/create'),
-            'edit' => EditScholarshipType::route('/{record}/edit'),
+
         ];
     }
 }

@@ -24,6 +24,7 @@ class BlogPostForm
                     ->schema([
                         TextInput::make('title')
                             ->required()
+                            ->placeholder('Enter blog post title')
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', \Illuminate\Support\Str::slug($state))),
                         TextInput::make('slug')
@@ -59,8 +60,12 @@ class BlogPostForm
                         Select::make('author_id')
                             ->relationship('author', 'name')
                             ->default(auth()->id())
+                            ->searchable()
+                            ->preload()
                             ->required(),
                         Toggle::make('is_published')
+                            ->label('Published')
+                            ->helperText('Enable to make this post visible to the public')
                             ->required(),
                         DateTimePicker::make('published_at')
                             ->default(now()),

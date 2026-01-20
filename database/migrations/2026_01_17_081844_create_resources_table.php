@@ -20,9 +20,10 @@ return new class extends Migration
                 $table->longText('content')->nullable();
                 
                 // Resource classification
-                $table->enum('resource_type', ['guide', 'template', 'tool', 'video', 'article'])->default('article');
-                $table->enum('category', ['scholarship', 'essay', 'financial-aid', 'study-abroad', 'career'])->default('scholarship');
-                $table->enum('difficulty_level', ['beginner', 'intermediate', 'advanced'])->default('beginner');
+                // Resource classification
+                $table->string('resource_type')->default('article');
+                $table->string('category')->default('scholarship');
+                $table->string('difficulty_level')->default('beginner');
                 
                 // Media and files
                 $table->string('featured_image')->nullable();
