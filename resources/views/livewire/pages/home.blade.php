@@ -169,13 +169,13 @@
     @if($countries->count() > 0)
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[-4rem] relative z-20">
             <div x-data="{ 
-                                                                                                    scroll: 0, 
-                                                                                                    max: 0,
-                                                                                                    updateMax() { 
-                                                                                                        this.max = $refs.container.scrollWidth - $refs.container.clientWidth 
-                                                                                                    } 
-                                                                                                }" x-init="updateMax()"
-                @resize.window="updateMax()" class="relative group">
+                                                                                                                        scroll: 0, 
+                                                                                                                        max: 0,
+                                                                                                                        updateMax() { 
+                                                                                                                            this.max = $refs.container.scrollWidth - $refs.container.clientWidth 
+                                                                                                                        } 
+                                                                                                                    }"
+                x-init="updateMax()" @resize.window="updateMax()" class="relative group">
                 <div x-ref="container" class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-8 pt-4">
                     @foreach($countries as $country)
                         <a href="{{ route('scholarships.index', ['country' => $country->slug]) }}" class="flex-none w-40 group">
@@ -245,7 +245,7 @@
     <!-- Scholarships by Type -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div class="absolute -right-20 top-0 w-80 h-80 bg-blob-purple opacity-30 pointer-events-none"></div>
-        <div class="p-12 border border-blue-50/50  relative overflow-hidden">
+        <div class="border border-blue-50/50  relative overflow-hidden">
             <div class="absolute inset-0 bg-soft-blue/10"></div>
             <div class="relative z-10">
                 <div class="text-center mb-10">
@@ -264,7 +264,7 @@
                         @foreach($scholarshipTypes as $type)
                             <button type="button" wire:click.prevent="setType('{{ $type->slug }}')"
                                 class="px-6 py-3 rounded-full text-sm font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5
-                                                                                                                                                                                                                                                                                                        {{ $selectedTypeSlug === $type->slug ? 'ring-4 ring-offset-2 ring-primary-200 scale-105 ' . $colors[$loop->index % count($colors)] : 'bg-white border border-blue-200 text-gray-600 hover:text-white ' . str_replace('text-white', '', $colors[$loop->index % count($colors)]) }}">
+                                                                                                                                                                                                                                                                                                                            {{ $selectedTypeSlug === $type->slug ? 'ring-4 ring-offset-2 ring-primary-200 scale-105 ' . $colors[$loop->index % count($colors)] : 'bg-white border border-blue-200 text-gray-600 hover:text-white ' . str_replace('text-white', '', $colors[$loop->index % count($colors)]) }}">
                                 {{ $type->name }}
                             </button>
                         @endforeach
@@ -336,7 +336,7 @@
                 <div class="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start">
                     <a href="{{ route('register') }}"
                         class="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-primary-950 font-black rounded-[2rem] text-lg shadow-2xl hover:shadow-primary-500/20 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 overflow-hidden">
-                        <span>Get Personalized Matches</span>
+                        <span>Get Matches</span>
                         <div
                             class="w-8 h-8 rounded-full bg-primary-900 text-white flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,7 +379,7 @@
                                 </svg>
                             </div>
                             <span
-                                class="px-3 py-1 rounded-full bg-success-500/20 text-success-400 text-[10px] font-black uppercase tracking-widest border border-success-500/20">98%
+                                class="px-3 py-1 rounded-full bg-success-500/20 text-success-400 text-[10px] font-black uppercase text-white tracking-widest border border-success-500/20">98%
                                 Match</span>
                         </div>
 
@@ -435,7 +435,7 @@
                     @foreach($fieldsOfStudy->take(10) as $field)
                                     <button type="button" wire:click.prevent="setField('{{ $field->slug }}')"
                                         class="flex items-center justify-between p-4 border rounded-2xl w-full text-left transition-all group/field
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedFieldSlug === $field->slug
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedFieldSlug === $field->slug
                         ? 'bg-purple-600 border-purple-600 shadow-xl shadow-purple-900/10'
                         : 'bg-white/80 border-purple-50 hover:bg-white hover:border-purple-200 hover:shadow-lg hover:shadow-purple-900/5' }}">
                                         <span
@@ -444,7 +444,7 @@
                                         </span>
                                         <div
                                             class="w-8 h-8 rounded-full flex items-center justify-center transition-all
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $selectedFieldSlug === $field->slug ? 'bg-white/20 text-white' : 'bg-purple-50 text-purple-400 group-hover/field:bg-purple-100 group-hover/field:text-purple-600' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $selectedFieldSlug === $field->slug ? 'bg-white/20 text-white' : 'bg-purple-50 text-purple-400 group-hover/field:bg-purple-100 group-hover/field:text-purple-600' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 5l7 7-7 7" />
@@ -505,7 +505,7 @@
                     @foreach($educationLevels as $level)
                                     <button type="button" wire:click.prevent="setLevel('{{ $level->slug }}')"
                                         class="px-6 py-3 rounded-full font-bold transition-all border
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedLevelSlug === $level->slug
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $selectedLevelSlug === $level->slug
                         ? 'bg-white text-primary-700 border-white shadow-[0_0_20px_rgba(255,255,255,0.3)] scale-105'
                         : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20' }}">
                                         {{ $level->name }}
@@ -565,7 +565,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
                 @foreach($latestPosts as $post)
                     <article
-                        class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                        class="group bg-white rounded-xl border border-gray-100 shadow-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
                         <!-- Image -->
                         <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
                             <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
@@ -643,30 +643,30 @@
 
             @if($testimonials->isNotEmpty())
                 <div x-data="{ 
-                                                                                scroll: 0, 
-                                                                                max: 0,
-                                                                                autoplayInterval: null,
-                                                                                paused: false,
-                                                                                updateMax() { 
-                                                                                    this.max = $refs.testimonial_container.scrollWidth - $refs.testimonial_container.clientWidth 
-                                                                                },
-                                                                                startAutoplay() {
-                                                                                    this.autoplayInterval = setInterval(() => {
-                                                                                        if (!this.paused) {
-                                                                                            if ($refs.testimonial_container.scrollLeft + $refs.testimonial_container.clientWidth >= $refs.testimonial_container.scrollWidth) {
-                                                                                                $refs.testimonial_container.scrollLeft = 0;
-                                                                                            } else {
-                                                                                                $refs.testimonial_container.scrollLeft += 1;
-                                                                                            }
-                                                                                        }
-                                                                                    }, 30);
-                                                                                },
-                                                                                stopAutoplay() {
-                                                                                    clearInterval(this.autoplayInterval);
-                                                                                }
-                                                                            }" x-init="updateMax(); startAutoplay()"
-                    @resize.window="updateMa
-                                                          x     ()" @mouseenter="paused = true"
+                                                                                                    scroll: 0, 
+                                                                                                    max: 0,
+                                                                                                    autoplayInterval: null,
+                                                                                                    paused: false,
+                                                                                                    updateMax() { 
+                                                                                                        this.max = $refs.testimonial_container.scrollWidth - $refs.testimonial_container.clientWidth 
+                                                                                                    },
+                                                                                                    startAutoplay() {
+                                                                                                        this.autoplayInterval = setInterval(() => {
+                                                                                                            if (!this.paused) {
+                                                                                                                if ($refs.testimonial_container.scrollLeft + $refs.testimonial_container.clientWidth >= $refs.testimonial_container.scrollWidth) {
+                                                                                                                    $refs.testimonial_container.scrollLeft = 0;
+                                                                                                                } else {
+                                                                                                                    $refs.testimonial_container.scrollLeft += 1;
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }, 30);
+                                                                                                    },
+                                                                                                    stopAutoplay() {
+                                                                                                        clearInterval(this.autoplayInterval);
+                                                                                                    }
+                                                                                                }"
+                    x-init="updateMax(); startAutoplay()" @resize.window="updateMa
+                                                                              x     ()" @mouseenter="paused = true"
                     @mouseleave="paused = false" class="relative group">
                     <div x-ref="testimonial_container"
                         class="flex gap-6 overflow-x-auto no-scrollbar pb-8 px-4 sm:px-0 scroll-smooth">
