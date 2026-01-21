@@ -34,7 +34,7 @@ class ChangePassword extends Component
 
         session()->flash('status', 'password-updated');
         
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended();
     }
 
     public function render()

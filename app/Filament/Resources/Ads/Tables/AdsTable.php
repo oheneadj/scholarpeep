@@ -26,7 +26,6 @@ class AdsTable
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                
                 TextColumn::make('position')
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state->value)
