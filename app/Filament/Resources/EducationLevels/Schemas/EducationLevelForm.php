@@ -10,8 +10,7 @@ class EducationLevelForm
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Section::make()
-                    ->schema([
+               
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
@@ -23,7 +22,7 @@ class EducationLevelForm
                             ->placeholder('e.g. bachelors-degree')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
-                    ]),
+                  
             ]);
     }
 }

@@ -74,7 +74,7 @@
 
 ### Week 3-4: Admin Panel (Filament 5)
 
-#### **[IN PROGRESS]** Dashboard Configuration
+#### Dashboard Configuration
 - [x] Create Filament dashboard page
 - [x] Add metrics cards (Total Scholarships, Total Users, Monthly Additions, Views, Clicks, CTR, Revenue)
 - [x] Create scholarship views chart (line chart, last 30 days)
@@ -110,13 +110,13 @@
 - [x] Create `TenantResource` for user management (UserResource)
 - [x] Add list view with filters (verified, auth provider, date range)
 - [x] Add view page showing user details and saved scholarships
-- [ ] Add actions (send email, suspend, delete)
+- [ ] Add actions (send email, suspend - already has is_active toggle)
 - [ ] Implement user export to CSV
 
 #### Permissions & Roles
-- [ ] Configure Filament roles (Admin, Content Manager)
-- [ ] Set up policies for each resource
-- [ ] Test permission restrictions
+- [x] Configure Filament roles (Admin, Content Manager)
+- [x] Set up policies for each resource
+- [x] Test permission restrictions
 
 ---
 
@@ -177,9 +177,9 @@
 
 #### Search Results Page
 - [x] Create search results controller and route
-- [ ] Implement Premium scholarship positioning (top 2, full-width)
-- [ ] Add Featured scholarship mixing (every 3-5 results)
-- [ ] Apply sponsorship rotation algorithm
+- [x] Implement Premium scholarship positioning (top 2, full-width)
+- [x] Add Featured scholarship mixing (every 3-5 results)
+- [x] Apply sponsorship rotation algorithm (basic latest rotation)
 - [x] Show search query and filters applied
 - [x] Add "no results" state with suggestions
 - [ ] Test performance with large datasets
@@ -226,7 +226,7 @@
 - [x] Show days until deadline
 - [x] Add progress bar for requirements completion
 - [x] Implement bulk actions (change status, delete)
-- [ ] Create `ScholarshipStatusUpdate` Livewire component (modal)
+- [x] Create `ScholarshipStatusUpdate` Livewire component (modal)
 - [x] Add notes field per saved scholarship
 - [x] Show last updated timestamp
 - [x] Make responsive
@@ -240,7 +240,7 @@
 - [x] Add progress bar visualization
 - [x] Make accessible and mobile-friendly
 
-#### **[IN PROGRESS]** Dashboard Layout
+#### Dashboard Layout
 - [x] Create dashboard layout Blade component
 - [x] Build sidebar navigation (mobile drawer)
 - [x] Add user profile dropdown
@@ -294,9 +294,9 @@
 - [ ] Create scheduled tasks in `Kernel.php`:
   - [ ] Daily digest job (8 AM)
   - [ ] Weekly digest job (Monday 8 AM)
-  - [ ] Deadline reminders job (9 AM daily)
+  - [x] Deadline reminders job (9 AM daily)
   - [ ] Expire sponsorships command (daily)
-  - [ ] Sitemap generation (daily)
+  - [x] Sitemap generation (daily)
 - [ ] Test scheduled tasks locally
 - [ ] Add queue monitoring
 
@@ -421,14 +421,14 @@
 - [x] Create `blog_posts` table migration
 - [x] Create `BlogPost` model
 - [x] Build Filament resource for blog management
-- [ ] Create blog homepage (`/blog`)
-- [ ] Build blog post detail page (`/blog/{slug}`)
+- [x] Create blog homepage (`/blog`)
+- [x] Build blog post detail page (`/blog/{slug}`)
 - [x] Add categories and tags (as SEO meta)
 - [ ] Implement related posts algorithm
 - [x] Create `resources` table migration
 - [x] Create `Resource` model
 - [x] Build Filament resource for academic resources
-- [ ] Create resources page (`/resources`)
+- [x] Create resources page (`/resources`)
 - [x] Add file upload for downloadable resources
 - [ ] Implement search for blog and resources
 - [x] Optimize for SEO (Schema.org for BlogPosting)
@@ -448,10 +448,10 @@
 - [ ] Build spam detection
 
 ### Weeks 24-26: Success Stories
-- [ ] Create `success_stories` table migration
-- [ ] Build success story submission form
-- [ ] Implement admin approval workflow
-- [ ] Create success stories page (`/success-stories`)
+- [x] Create `success_stories` table migration
+- [x] Build success story submission form
+- [x] Implement admin approval workflow (is_approved toggle in table)
+- [x] Create success stories page (`/success-stories`)
 - [ ] Add featured stories to homepage
 - [ ] Implement filtering by country, field, scholarship
 - [ ] Create individual story detail pages

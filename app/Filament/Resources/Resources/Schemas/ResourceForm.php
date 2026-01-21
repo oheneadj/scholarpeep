@@ -61,8 +61,15 @@ class ResourceForm
 
                 Section::make('Files & Links')
                     ->schema([
+                        FileUpload::make('featured_image')
+                            ->image()
+                            ->disk('public')
+                            ->directory('resources/images')
+                            ->columnSpanFull(),
+                            
                         FileUpload::make('file_path')
                             ->label('Downloadable File')
+                            ->disk('public')
                             ->directory('resources/files')
                             ->maxSize(10240)
                             ->visible(function ($get) {

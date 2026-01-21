@@ -15,7 +15,8 @@
                     class="bg-white rounded-2xl shadow-200/50 border border-gray-100 overflow-hidden group hover:border-primary-100 transition-all duration-300">
                     <div class="relative h-64 overflow-hidden">
                         <img src="{{ $story->photo_url }}" alt="{{ $story->student_name }}"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                         </div>

@@ -78,7 +78,7 @@
                     <div class="p-8 md:p-12">
                         @if($resource->featured_image)
                             <img src="{{ asset('storage/' . $resource->featured_image) }}" alt="{{ $resource->title }}"
-                                class="w-full h-auto rounded-xl mb-8 shadow-md">
+                                class="w-full h-auto rounded-xl mb-8 shadow-md" loading="lazy">
                         @endif
 
                         <div class="prose prose-lg prose-primary max-w-none">

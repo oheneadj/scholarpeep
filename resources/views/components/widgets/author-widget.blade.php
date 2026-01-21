@@ -19,9 +19,9 @@
         <div class="relative w-16 h-16 shrink-0">
             <!-- Vibrant Background Circle -->
             <div class="absolute inset-0 bg-gradient-to-tr from-orange-400 to-rose-600 rounded-full opacity-25 blur-sm transform scale-110"></div>
-            <img src="{{ $avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=1e3a8a&color=fff' }}" 
+            <img src="{{ asset($avatar) ?? 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=1e3a8a&color=fff' }}" 
                  class="relative w-full h-full rounded-full object-cover border-2 border-white shadow-md" 
-                 alt="{{ $name }}">
+                 alt="{{ $name }}" loading="lazy">
         </div>
         <div>
             <h3 class="font-bold text-xl text-gray-900 leading-tight">{{ $name }}</h3>
@@ -52,7 +52,7 @@
     @if(!empty($socials))
         <div class="flex items-center gap-5">
             @foreach($socials as $platform => $url)
-                <a href="{{ $url }}" class="text-gray-700 hover:text-primary-600 transition-colors" title="{{ ucfirst($platform) }}">
+                <a href="{{ $url }}" target="_blank" class="text-gray-700 hover:text-primary-600 transition-colors" title="{{ ucfirst($platform) }}">
                     @if($platform === 'twitter' || $platform === 'x')
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                     @elseif($platform === 'facebook')

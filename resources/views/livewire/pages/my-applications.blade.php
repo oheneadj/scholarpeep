@@ -32,16 +32,16 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
         @foreach(\App\Enums\ApplicationStatus::cases() as $status)
             <div wire:click="$set('statusFilter', '{{ $status->value }}')" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm cursor-pointer hover:border-primary-200 hover:shadow-md transition-all group
-                         {{ $statusFilter === $status->value ? 'ring-2 ring-primary-500 ring-offset-2' : '' }}">
+                                 {{ $statusFilter === $status->value ? 'ring-2 ring-primary-500 ring-offset-2' : '' }}">
                 <div class="flex items-center justify-between mb-2">
                     <span
                         class="text-xs font-bold uppercase tracking-wider text-gray-400 group-hover:text-primary-600 transition-colors">{{ $status->label() }}</span>
                     <div class="w-2 h-2 rounded-full
-                                {{ $status->value === 'accepted' ? 'bg-emerald-500' : '' }}
-                                {{ $status->value === 'rejected' ? 'bg-rose-500' : '' }}
-                                {{ $status->value === 'applied' ? 'bg-blue-500' : '' }}
-                                {{ $status->value === 'saved' ? 'bg-gray-400' : '' }}
-                                {{ $status->value === 'pending' ? 'bg-amber-500' : '' }}"></div>
+                                        {{ $status->value === 'accepted' ? 'bg-emerald-500' : '' }}
+                                        {{ $status->value === 'rejected' ? 'bg-rose-500' : '' }}
+                                        {{ $status->value === 'applied' ? 'bg-blue-500' : '' }}
+                                        {{ $status->value === 'saved' ? 'bg-gray-400' : '' }}
+                                        {{ $status->value === 'pending' ? 'bg-amber-500' : '' }}"></div>
                 </div>
                 <div class="text-3xl font-black text-gray-900">
                     {{ $statusCounts[$status->value] ?? 0 }}
@@ -71,11 +71,11 @@
                 @foreach(\App\Enums\ApplicationStatus::cases() as $status)
                     <button wire:click="bulkUpdateStatus('{{ $status->value }}')"
                         class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95
-                                               {{ $status->value === 'accepted' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' : '' }}
-                                               {{ $status->value === 'applied' ? 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20' : '' }}
-                                               {{ $status->value === 'pending' ? 'bg-warning-500/10 text-warning-400 hover:bg-warning-500/20' : '' }}
-                                               {{ $status->value === 'rejected' ? 'bg-rose-500/10 text-rose-400 hover:bg-rose-500/20' : '' }}
-                                               {{ $status->value === 'saved' ? 'bg-gray-500/10 text-gray-400 hover:bg-gray-500/20' : '' }}">
+                                                       {{ $status->value === 'accepted' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' : '' }}
+                                                       {{ $status->value === 'applied' ? 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20' : '' }}
+                                                       {{ $status->value === 'pending' ? 'bg-warning-500/10 text-warning-400 hover:bg-warning-500/20' : '' }}
+                                                       {{ $status->value === 'rejected' ? 'bg-rose-500/10 text-rose-400 hover:bg-rose-500/20' : '' }}
+                                                       {{ $status->value === 'saved' ? 'bg-gray-500/10 text-gray-400 hover:bg-gray-500/20' : '' }}">
                         {{ $status->label() }}
                     </button>
                 @endforeach
@@ -179,9 +179,9 @@
                                             <div
                                                 class="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1.5 shrink-0 border border-gray-100 overflow-hidden shadow-sm">
                                                 @if($saved->scholarship->provider_logo)
-                                                    <img src="{{ Str::startsWith($saved->scholarship->provider_logo, 'http') ? $saved->scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($saved->scholarship->provider_logo) }}"
+                                                    <img src="{{ $saved->scholarship->provider_logo_url }}"
                                                         alt="{{ $saved->scholarship->provider_name }}"
-                                                        class="max-h-full max-w-full object-contain">
+                                                        class="max-h-full max-w-full object-contain" loading="lazy">
                                                 @else
                                                     <div class="text-gray-400 font-black text-sm">
                                                         {{ substr($saved->scholarship->provider_name, 0, 1) }}
@@ -207,7 +207,7 @@
                                                         class="text-sm font-bold text-gray-900">{{ $saved->scholarship->primary_deadline->format('M j, Y') }}</span>
                                                     <span
                                                         class="text-[10px] font-bold uppercase tracking-wider 
-                                                                                                    {{ $saved->scholarship->primary_deadline->isPast() ? 'text-rose-500' : 'text-emerald-500' }}">
+                                                                                                                            {{ $saved->scholarship->primary_deadline->isPast() ? 'text-rose-500' : 'text-emerald-500' }}">
                                                         {{ $saved->scholarship->primary_deadline->diffForHumans() }}
                                                     </span>
                                                 </div>
@@ -248,12 +248,12 @@
                                                 </div>
 
                                                 <div class="h-full rounded-full transition-all duration-500 relative
-                                                            {{ $saved->status->value === 'accepted' ? 'bg-emerald-500 w-full' : '' }}
-                                                            {{ $saved->status->value === 'rejected' ? 'bg-rose-500 w-full opacity-50' : '' }}
-                                                            {{ $saved->status->value === 'applied' ? 'bg-blue-500 w-3/4' : '' }}
-                                                            {{ $saved->status->value === 'pending' ? 'bg-amber-500 w-1/2' : '' }}
-                                                            {{ $saved->status->value === 'saved' ? 'bg-gray-300 w-1/4' : '' }}
-                                                        "></div>
+                                                                            {{ $saved->status->value === 'accepted' ? 'bg-emerald-500 w-full' : '' }}
+                                                                            {{ $saved->status->value === 'rejected' ? 'bg-rose-500 w-full opacity-50' : '' }}
+                                                                            {{ $saved->status->value === 'applied' ? 'bg-blue-500 w-3/4' : '' }}
+                                                                            {{ $saved->status->value === 'pending' ? 'bg-amber-500 w-1/2' : '' }}
+                                                                            {{ $saved->status->value === 'saved' ? 'bg-gray-300 w-1/4' : '' }}
+                                                                        "></div>
                                             </div>
                                         </button>
                                     </td>

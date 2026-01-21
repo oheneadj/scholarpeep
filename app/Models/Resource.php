@@ -150,4 +150,15 @@ class Resource extends Model
         }
         return $query;
     }
+
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        if ($this->featured_image) {
+            return \Illuminate\Support\Str::contains($this->featured_image, 'http')
+                ? $this->featured_image
+                : \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+        }
+
+        return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=1200';
+    }
 }

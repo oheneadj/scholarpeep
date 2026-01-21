@@ -41,6 +41,8 @@
                     class="block w-full pl-10 pr-4 py-3 bg-white/10 border border-white/10 rounded-xl text-sm text-white placeholder-primary-200 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all shadow-sm">
             </div>
 
+            <x-turnstile action="newsletter" theme="dark" class="my-2" />
+
             <button type="submit"
                 class="block w-full py-3 px-4 bg-white text-primary-900 font-bold rounded-xl text-sm hover:bg-primary-50 active:transform active:scale-95 transition-all shadow-lg">
                 Subscribe Now

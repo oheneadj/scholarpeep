@@ -6,13 +6,15 @@
 @endphp
 
 @if($tools->isNotEmpty())
-    <div class="bg-white rounded-xl p-8 border border-gray-100 shadow-sm">
-        <h3 class="font-bold text-gray-400 text-xs uppercase tracking-wider mb-6">Creating</h3>
+    <div class="bg-white rounded-xl p-8 border-2 border-green-200 shadow-200/50">
+        <h3 class="font-bold text-gray-400 text-xs uppercase tracking-wider mb-6">Creating Tools</h3>
 
         <div class="space-y-8">
             @foreach($tools as $tool)
                 <!-- Tool Item -->
+
                 <div class="group relative">
+                    <img src="{{ asset("storage/" . $tool->icon) }}" alt="{{ $tool->name }}" class="w-auto h-12 mb-2">
                     <h4 class="text-lg font-bold text-primary-600 mb-2 flex items-center gap-2">
                         {{ $tool->name }}
                         <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none"

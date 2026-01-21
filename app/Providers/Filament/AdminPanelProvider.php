@@ -29,7 +29,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
-            ->brandName('Scholarpeep Admin')
+            ->brandName(fn () => app(\App\Settings\SeoSettings::class)->site_name ?? 'Scholarpeep Admin')
+            ->brandLogo(fn () => app(\App\Settings\SeoSettings::class)->site_logo ? \Illuminate\Support\Facades\Storage::disk('public')->url(app(\App\Settings\SeoSettings::class)->site_logo) : null)
+            ->brandLogoHeight('2.5rem')
             ->colors([
                 'primary' => Color::Blue,
             ])

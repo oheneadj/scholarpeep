@@ -35,6 +35,7 @@ class BlogPostInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('views_count')
+                ->badge()
                     ->numeric(),
                 TextEntry::make('created_at')
                     ->dateTime()

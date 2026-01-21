@@ -34,6 +34,7 @@ class FieldOfStudiesTable
             ])
             ->recordActions([
                 EditAction::make()
+                    ->button()
                     ->modalWidth('md')
                     ->color('primary'),
             ])

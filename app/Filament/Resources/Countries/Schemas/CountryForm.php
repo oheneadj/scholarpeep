@@ -10,8 +10,8 @@ class CountryForm
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Section::make()
-                    ->schema([
+               
+                  
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
@@ -28,7 +28,7 @@ class CountryForm
                             ->maxLength(255)
                             ->placeholder('e.g. nigeria')
                             ->unique(ignoreRecord: true),
-                    ]),
+                   
             ]);
     }
 }

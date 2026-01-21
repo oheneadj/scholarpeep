@@ -34,6 +34,7 @@ class CountriesTable
             ->recordActions([
                 EditAction::make()
                     ->modalWidth('md')
+                    ->button()
                     ->color('primary'),
             ])
             ->toolbarActions([

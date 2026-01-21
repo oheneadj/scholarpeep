@@ -34,7 +34,8 @@
                             <div
                                 class="w-8 h-8 rounded-full border-2 border-zinc-900 bg-zinc-800 flex items-center justify-center overflow-hidden">
                                 <img src="https://i.pravatar.cc/100?u={{ $i }}" alt="User"
-                                    class="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition duration-300">
+                                    class="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition duration-300"
+                                    loading="lazy">
                             </div>
                         @endforeach
                     </div>

@@ -48,6 +48,7 @@ class ResourcesTable
                 TextColumn::make('difficulty_level')
                     ->label('Difficulty')
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color(fn ($state): string => match ($state instanceof DifficultyLevel ? $state->value : strtolower($state)) {
                         'beginner' => 'success',
                         'intermediate' => 'warning',
@@ -124,6 +125,7 @@ class ResourcesTable
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->button()
                     ->color('gray'),
                 EditAction::make()
                     ->color('primary'),

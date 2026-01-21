@@ -22,6 +22,12 @@ class AdForm
                             ->required()
                             ->placeholder('e.g. Summer Sale Banner')
                             ->maxLength(255),
+
+                        Select::make('position')
+                            ->options(AdPosition::class)
+                            ->required()
+                            ->default(AdPosition::SIDEBAR)
+                            ->helperText('Choose where this ad should be displayed'),
                         
                         FileUpload::make('image')
                             ->image()
@@ -29,11 +35,7 @@ class AdForm
                             ->visibility('public')
                             ->directory('ads')
                             ->required()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->imageResizeTargetWidth('1920')
-                            ->imageResizeTargetHeight('1080')
-                            ->helperText('Image will be enforced to 16:9 aspect ratio. WebP format is supported and recommended. Recommended size: 1920x1080px')
+                            ->helperText('Supported Aspect Ratios: 16:9 (1920x1080) or 1:1 (1080x1080). WebP format is supported and recommended.')
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(2048),
                         
@@ -44,11 +46,7 @@ class AdForm
                             ->label('Target URL')
                             ->helperText('The URL users will be redirected to when they click the ad'),
                         
-                        Select::make('position')
-                            ->options(AdPosition::class)
-                            ->required()
-                            ->default(AdPosition::SIDEBAR)
-                            ->helperText('Choose where this ad should be displayed'),
+                      
                         
                         Toggle::make('is_active')
                             ->label('Active')

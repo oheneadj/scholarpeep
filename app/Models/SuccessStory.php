@@ -51,7 +51,7 @@ class SuccessStory extends Model
         if ($this->student_photo) {
             return \Illuminate\Support\Str::contains($this->student_photo, 'http')
                 ? $this->student_photo
-                : \Illuminate\Support\Facades\Storage::url($this->student_photo);
+                : \Illuminate\Support\Facades\Storage::disk('public')->url($this->student_photo);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->student_name) . '&color=3b82f6&background=eff6ff';

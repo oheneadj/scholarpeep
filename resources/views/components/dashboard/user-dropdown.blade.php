@@ -5,7 +5,7 @@
             class="w-9 h-9 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold overflow-hidden shadow-inner">
             @if(Auth::user()->avatar)
                 <img src="{{ str_starts_with(Auth::user()->avatar, 'http') ? Auth::user()->avatar : asset('storage/' . Auth::user()->avatar) }}"
-                    alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                    alt="{{ Auth::user()->name }}" class="w-full h-full object-cover" loading="lazy">
             @else
                 {{ substr(Auth::user()->name, 0, 1) }}
             @endif

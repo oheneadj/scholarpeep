@@ -14,11 +14,16 @@ use App\Models\SavedResource;
 class ResourceIndex extends Component
 {
     use WithPagination;
+    use \App\Livewire\Traits\CanSaveResource;
 
     public $search = '';
     public $selectedType = '';
     public $showFilters = false;
-    public $savedResourceIds = [];
+
+    public function mount()
+    {
+        $this->mountCanSaveResource();
+    }
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -52,38 +57,6 @@ class ResourceIndex extends Component
         $this->showFilters = !$this->showFilters;
     }
 
-    public function toggleSave($resourceId)
-    {
-        if (!Auth::check()) {
-            return $this->redirect(route('login'));
-        }
-
-        $user = Auth::user();
-        $key = 'save-resource:'.$user->id;
-
-        if (RateLimiter::tooManyAttempts($key, 10)) {
-            $seconds = RateLimiter::availableIn($key);
-            $this->dispatch('notify', message: "Too many requests. Please wait $seconds seconds.");
-            return;
-        }
-
-        RateLimiter::hit($key);
-
-        $saved = SavedResource::where('user_id', $user->id)
-            ->where('resource_id', $resourceId)
-            ->first();
-
-        if ($saved) {
-            $saved->delete();
-            $this->dispatch('notify', message: 'Resource removed from saved.');
-        } else {
-            SavedResource::create([
-                'user_id' => $user->id,
-                'resource_id' => $resourceId,
-            ]);
-            $this->dispatch('notify', message: 'Resource saved successfully!');
-        }
-    }
 
     public function getResourcesProperty()
     {
@@ -96,15 +69,9 @@ class ResourceIndex extends Component
 
     public function render()
     {
-        if (Auth::check()) {
-            $this->savedResourceIds = SavedResource::where('user_id', Auth::id())
-                ->pluck('resource_id')
-                ->toArray();
-        }
 
         return view('livewire.pages.resource-index', [
             'resources' => $this->resources,
-            'resourceTypes' => ['guide', 'template', 'tool', 'video', 'article', 'calculator'],
             'resourceTypes' => ['guide', 'template', 'tool', 'video', 'article', 'calculator'],
         ])->layoutData([
             'title' => app(\App\Settings\SeoSettings::class)->resources_title ?? 'Student Resources & Tools - Scholarpeep',

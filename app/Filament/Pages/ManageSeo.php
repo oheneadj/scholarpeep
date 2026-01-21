@@ -45,11 +45,13 @@ class ManageSeo extends SettingsPage
                                     ->helperText('Default meta description for pages without specific content.'),
                                FileUpload::make('site_logo')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('seo')
                                     ->visibility('public'),
                                FileUpload::make('og_image')
                                     ->label('Default Social Image (OG Image)')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('seo')
                                     ->visibility('public')
                                     ->helperText('Used when a page doesn\'t have a specific featured image.'),

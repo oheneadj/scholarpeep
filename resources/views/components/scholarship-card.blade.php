@@ -8,30 +8,31 @@
 
 @if($view === 'grid')
     <div {{ $attributes->merge(['class' => 'group bg-white rounded-xl border shadow hover:shadow-xl hover:shadow-primary-600/5 hover:-translate-y-1 transition-all duration-500 p-8 flex flex-col h-full relative overflow-hidden cursor-pointer ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }} x-data="{ 
-                        copied: false,
-                        copyLink() {
-                            const text = '{{ route('scholarships.show', $scholarship->slug) }}';
-                            if (navigator.clipboard && window.isSecureContext) {
-                                navigator.clipboard.writeText(text).then(() => {
-                                    this.copied = true;
-                                    setTimeout(() => this.copied = false, 2000);
-                                });
-                            } else {
-                                const textArea = document.createElement('textarea');
-                                textArea.value = text;
-                                document.body.appendChild(textArea);
-                                textArea.select();
-                                try {
-                                    document.execCommand('copy');
-                                    this.copied = true;
-                                    setTimeout(() => this.copied = false, 2000);
-                                } catch (err) {
-                                    console.error('Fallback: Unable to copy', err);
-                                }
-                                document.body.removeChild(textArea);
-                            }
-                        }
-                    }" onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
+                                                    copied: false,
+                                                    copyLink() {
+                                                        const text = '{{ route('scholarships.show', $scholarship->slug) }}';
+                                                        if (navigator.clipboard && window.isSecureContext) {
+                                                            navigator.clipboard.writeText(text).then(() => {
+                                                                this.copied = true;
+                                                                setTimeout(() => this.copied = false, 2000);
+                                                            });
+                                                        } else {
+                                                            const textArea = document.createElement('textarea');
+                                                            textArea.value = text;
+                                                            document.body.appendChild(textArea);
+                                                            textArea.select();
+                                                            try {
+                                                                document.execCommand('copy');
+                                                                this.copied = true;
+                                                                setTimeout(() => this.copied = false, 2000);
+                                                            } catch (err) {
+                                                                console.error('Fallback: Unable to copy', err);
+                                                            }
+                                                            document.body.removeChild(textArea);
+                                                        }
+                                                    }
+                                                }"
+        onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
         @if(!$isStandard)
             <div @class([
                 'absolute top-0 right-0 py-1.5 px-6 text-white text-[10px] uppercase font-black tracking-[0.2em] rounded-bl-3xl shadow-lg z-10 flex items-center gap-2',
@@ -60,17 +61,16 @@
             @endif
         @endif
 
-
-
         <div class="flex items-center gap-5 mb-8">
             <div
                 class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center p-3 border border-gray-100 group-hover:border-primary-100 transition-colors shrink-0">
                 @if($scholarship->provider_logo)
-                    <img src="{{ Str::contains($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
-                        alt="{{ $scholarship->provider_name }}" class="max-h-full max-w-full object-contain">
+                    <img src="{{ $scholarship->provider_logo_url }}" alt="{{ $scholarship->provider_name }}"
+                        class="max-h-full max-w-full object-contain" loading="lazy">
                 @else
                     <img src="{{ asset('img/placeholder-logo.png') }}" alt="{{ $scholarship->provider_name }}"
-                        class="max-h-full max-w-full object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+                        class="max-h-full max-w-full object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all"
+                        loading="lazy">
                 @endif
 
             </div>
@@ -98,7 +98,8 @@
                     class="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-full text-[10px] font-bold border border-gray-100">📅
                     {{ $scholarship->primary_deadline?->format('F j') ?? 'Rolling' }}</span>
             </div>
-            <p class="text-sm text-gray-500 line-clamp-2 font-medium leading-relaxed">{{ $scholarship->description }}</p>
+            <p class="text-sm text-gray-500 line-clamp-2 font-medium leading-relaxed">{{ $scholarship->description }}
+            </p>
             <div class="flex flex-wrap gap-2 pt-2">
                 @foreach($scholarship->educationLevels->take(2) as $level)
                     <span
@@ -169,37 +170,39 @@
     </div>
 @else
     <div {{ $attributes->merge(['class' => 'group bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden ' . ($isPremium ? 'border-purple-600' : ($isFeatured ? 'border-orange-500' : 'border-gray-100'))]) }} x-data="{ 
-                        copied: false,
-                        copyLink() {
-                            const text = '{{ route('scholarships.show', $scholarship->slug) }}';
-                            if (navigator.clipboard && window.isSecureContext) {
-                                navigator.clipboard.writeText(text).then(() => {
-                                    this.copied = true;
-                                    setTimeout(() => this.copied = false, 2000);
-                                });
-                            } else {
-                                const textArea = document.createElement('textarea');
-                                textArea.value = text;
-                                document.body.appendChild(textArea);
-                                textArea.select();
-                                try {
-                                    document.execCommand('copy');
-                                    this.copied = true;
-                                    setTimeout(() => this.copied = false, 2000);
-                                } catch (err) {
-                                    console.error('Fallback: Unable to copy', err);
-                                }
-                                document.body.removeChild(textArea);
-                            }
-                        }
-                    }" onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
+                                                    copied: false,
+                                                    copyLink() {
+                                                        const text = '{{ route('scholarships.show', $scholarship->slug) }}';
+                                                        if (navigator.clipboard && window.isSecureContext) {
+                                                            navigator.clipboard.writeText(text).then(() => {
+                                                                this.copied = true;
+                                                                setTimeout(() => this.copied = false, 2000);
+                                                            });
+                                                        } else {
+                                                            const textArea = document.createElement('textarea');
+                                                            textArea.value = text;
+                                                            document.body.appendChild(textArea);
+                                                            textArea.select();
+                                                            try {
+                                                                document.execCommand('copy');
+                                                                this.copied = true;
+                                                                setTimeout(() => this.copied = false, 2000);
+                                                            } catch (err) {
+                                                                console.error('Fallback: Unable to copy', err);
+                                                            }
+                                                            document.body.removeChild(textArea);
+                                                        }
+                                                    }
+                                                }"
+        onclick="window.location.href='{{ route('scholarships.show', $scholarship->slug) }}'">
         <div class="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center p-3 border border-gray-100 shrink-0">
             @if($scholarship->provider_logo)
-                <img src="{{ Str::contains($scholarship->provider_logo, 'http') ? $scholarship->provider_logo : \Illuminate\Support\Facades\Storage::url($scholarship->provider_logo) }}"
-                    alt="{{ $scholarship->provider_name }}" class="max-h-full max-w-full object-contain">
+                <img src="{{ $scholarship->provider_logo_url }}" alt="{{ $scholarship->provider_name }}"
+                    class="max-h-full max-w-full object-contain" loading="lazy">
             @else
                 <img src="{{ asset('img/placeholder-logo.png') }}" alt="{{ $scholarship->provider_name }}"
-                    class="max-h-full max-w-full object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+                    class="max-h-full max-w-full object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all"
+                    loading="lazy">
             @endif
 
         </div>
@@ -230,7 +233,8 @@
 
 
 
-            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-4">{{ $scholarship->provider_name }}</p>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-4">{{ $scholarship->provider_name }}
+            </p>
             <div class="flex flex-wrap gap-4">
                 <div class="flex items-center gap-1.5 text-xs font-bold text-gray-500">
                     @if($scholarship->countries->first())
@@ -245,7 +249,8 @@
                         class="text-warning-500">📅</span>
                     {{ $scholarship->primary_deadline?->format('M j, Y') ?? 'Rolling' }}</div>
                 <div class="flex items-center gap-1.5 text-xs font-bold text-gray-500"><span
-                        class="text-indigo-500">🎓</span> {{ $scholarship->educationLevels->first()->name ?? 'Any' }}</div>
+                        class="text-indigo-500">🎓</span> {{ $scholarship->educationLevels->first()->name ?? 'Any' }}
+                </div>
             </div>
         </div>
         <div

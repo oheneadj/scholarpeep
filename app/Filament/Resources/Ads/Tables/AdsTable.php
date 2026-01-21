@@ -23,7 +23,6 @@ class AdsTable
                 ImageColumn::make('image')
                     ->size(80)
                     ->label('Preview'),
-                
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
@@ -95,6 +94,7 @@ class AdsTable
             ])
             ->recordActions([
                 EditAction::make()
+                ->button()
                     ->color('primary'),
             ])
             ->toolbarActions([

@@ -9,8 +9,8 @@
             class="absolute top-3 left-3 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg text-primary-700 z-10 border border-gray-100 shadow-sm">
             Article
         </span>
-        <img src="{{ $post->featured_image_url }}"
-            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+        <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }} Featured Image"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
     </div>
 
     <!-- Content -->
@@ -40,7 +40,7 @@
         <div class="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
             <div class="flex items-center gap-2">
                 <img src="{{ $post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name) }}"
-                    class="w-6 h-6 rounded-full ring-2 ring-gray-100">
+                    alt="{{ $post->author->name }}" class="w-6 h-6 rounded-full ring-2 ring-gray-100" loading="lazy">
                 <span class="text-xs font-bold text-gray-700">{{ $post->author->name }}</span>
             </div>
             <a href="{{ route('blog.show', $post->slug) }}"

@@ -133,4 +133,28 @@ class Scholarship extends Model
     {
         return $this->sponsorship_tier !== SponsorshipTier::STANDARD;
     }
+
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        if ($this->featured_image) {
+            if (\Illuminate\Support\Str::contains($this->featured_image, 'http')) {
+                return $this->featured_image;
+            }
+            return asset('storage/' . $this->featured_image);
+        }
+
+        return 'https://images.unsplash.com/photo-152305085306e-8c44f2322a5e?auto=format&fit=crop&q=80&w=1200';
+    }
+
+    public function getProviderLogoUrlAttribute(): string
+    {
+        if ($this->provider_logo) {
+            if (\Illuminate\Support\Str::contains($this->provider_logo, 'http')) {
+                return $this->provider_logo;
+            }
+            return asset('storage/' . $this->provider_logo);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->provider_name) . '&background=eff6ff&color=3b82f6';
+    }
 }

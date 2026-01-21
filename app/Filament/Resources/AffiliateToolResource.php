@@ -4,12 +4,11 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use Filament\Schemas;
-use Filament\Forms\Set;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
-
 use App\Models\AffiliateTool;
+
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
@@ -19,9 +18,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Schemas\Components\Utilities\Set;
 use App\Filament\Resources\AffiliateToolResource\Pages;
 use App\Filament\Resources\AffiliateToolResource\Pages\EditAffiliateTool;
 use App\Filament\Resources\AffiliateToolResource\Pages\ListAffiliateTools;
@@ -42,8 +43,11 @@ class AffiliateToolResource extends Resource
     {
         return $schema
             ->components([
+               Section::make()
+               ->components([
                 TextInput::make('name')
                     ->required()
+                    ->placeholder('Eg. Grammarly')
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null),
@@ -51,31 +55,39 @@ class AffiliateToolResource extends Resource
                 TextInput::make('slug')
                     ->required()
                     ->maxLength(255)
+                    ->helperText('This will be generated from the name')
                     ->unique(ignoreRecord: true),
                 
                 TextInput::make('url')
                     ->label('Affiliate URL')
                     ->url()
+                    ->placeholder('Eg. https://grammarly.com/ref=1234')
                     ->required()
                     ->maxLength(255)
-                    ->columnSpanFull(),
+                    ->columnSpan(1),
+
+                     TextInput::make('sort_order')
+                    ->numeric()
+                    ->label('Sort Order')
+                    ->helperText('Lower numbers will be displayed first')
+                    ->default(0),
                     
                 Textarea::make('description')
                     ->rows(3)
-                    ->columnSpanFull(),
+                    ->label('Description')
+                    ->columnSpan(2),
                     
                 FileUpload::make('icon')
                     ->image()
-                    ->directory('affiliate-icons')
-                    ->visibility('public'),
-                    
-                TextInput::make('sort_order')
-                    ->numeric()
-                    ->default(0),
+                    ->disk('public')
+                    ->directory('affiliate-icons'),
                     
                 Toggle::make('is_active')
                     ->required()
+                    ->label('Active')
+                    ->helperText('Enable or disable this affiliate tool')
                     ->default(true),
+               ])
             ]);
     }
 
@@ -86,17 +98,21 @@ class AffiliateToolResource extends Resource
                 ImageColumn::make('icon'),
                 
                 TextColumn::make('name')
+                    ->label('Name')
                     ->searchable()
                     ->sortable(),
                     
                 TextColumn::make('url')
+                    ->label('URL')    
                     ->limit(30)
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->url(fn ($record) => $record->url, true),
                     
-                ToggleColumn::make('is_active'),
+                ToggleColumn::make('is_active')
+                    ->label('Active'),
                 
                 TextColumn::make('sort_order')
+                    ->label('Sort Order')
                     ->sortable(),
 
                 TextColumn::make('clicks_count')
@@ -107,8 +123,8 @@ class AffiliateToolResource extends Resource
                 //
             ])
             ->actions([
-               EditAction::make(),
-               DeleteAction::make(),
+               EditAction::make()->button()->color('primary'),
+               DeleteAction::make()->button()->color('danger'),
             ])
             ->bulkActions([
                BulkActionGroup::make([

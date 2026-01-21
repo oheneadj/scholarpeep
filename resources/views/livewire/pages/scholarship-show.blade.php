@@ -78,7 +78,7 @@
                 <div class="lg:col-span-4 flex justify-end">
                      <div class="flex items-center border-b border-gray-100 gap-4 p-4 bg-white rounded-3xl border border-gray-100">
                         <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-inner border border-gray-50">
-                            <img src="{{ $scholarship->provider_logo ?? 'https://ui-avatars.com/api/?name='.urlencode($scholarship->provider_name) }}" class="w-full h-full object-cover">
+                            <img src="{{ $scholarship->provider_logo_url }}" alt="{{ $scholarship->provider_name }}" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <p class="text-[10px] font-extrabold text-primary-600 uppercase tracking-widest mb-1">Provider</p>
@@ -90,9 +90,9 @@
 
             <!-- Main Featured Image -->
             <div class="mt-16 relative aspect-[21/9] rounded-xl overflow-hidden shadow border-8 border-white group">
-                <img src="{{ $scholarship->featured_image ?? 'https://images.unsplash.com/photo-152305085306e-8c44f2322a5e?auto=format&fit=crop&q=80&w=1200' }}" 
+                <img src="{{ $scholarship->featured_image_url }}" 
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[4000ms]" 
-                     alt="{{ $scholarship->title }}">
+                     alt="{{ $scholarship->title }} Featured Image">
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent"></div>
             </div>
         </div>
@@ -301,7 +301,9 @@
                                             @if($review->is_anonymous)
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                             @else
-                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($review->user->name) }}&background=eff6ff&color=3b82f6" class="w-full h-full object-cover">
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($review->user->name) }}&background=eff6ff&color=3b82f6" 
+                                                     alt="{{ $review->user->name }}"
+                                                     class="w-full h-full object-cover" loading="lazy">
                                             @endif
                                         </div>
                                         <div>
@@ -364,6 +366,8 @@
                                         <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Post Anonymously</span>
                                     </label>
 
+                                    <x-turnstile action="review" theme="dark" class="mt-4" />
+
                                     <button type="submit" class="px-8 py-3 bg-primary-600 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20 active:scale-95">
                                         Submit Review
                                     </button>
@@ -410,10 +414,10 @@
                     avatar="https://ui-avatars.com/api/?name=Scholarpeep+Team&background=1e3a8a&color=fff"
                     location="San Francisco, CA"
                     :socials="[
-                        'x' => '#',
-                        'facebook' => '#',
-                        'instagram' => '#',
-                        'linkedin' => '#'
+                        'x' => 'https://x.com/scholarpeep',
+                        'facebook' => 'https://facebook.com/scholarpeep',
+                        'instagram' => 'https://instagram.com/scholarpeep',
+                        'linkedin' => 'https://linkedin.com/scholarpeep'
                     ]"
                 />
 

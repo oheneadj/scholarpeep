@@ -4,14 +4,14 @@
     <!-- Hero Section (Featured Slider) -->
     @if($featuredPosts->count() > 0)
         <section class="relative bg-white border-b border-gray-100 overflow-hidden group" x-data="{ 
-                    activeSlide: 0, 
-                    slides: {{ $featuredPosts->count() }},
-                    timer: null,
-                    next() { this.activeSlide = (this.activeSlide + 1) % this.slides },
-                    prev() { this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides },
-                    startTimer() { this.timer = setInterval(() => this.next(), 6000) },
-                    stopTimer() { clearInterval(this.timer) }
-                }" x-init="startTimer()" @mouseenter="stopTimer()" @mouseleave="startTimer()">
+                                    activeSlide: 0, 
+                                    slides: {{ $featuredPosts->count() }},
+                                    timer: null,
+                                    next() { this.activeSlide = (this.activeSlide + 1) % this.slides },
+                                    prev() { this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides },
+                                    startTimer() { this.timer = setInterval(() => this.next(), 6000) },
+                                    stopTimer() { clearInterval(this.timer) }
+                                }" x-init="startTimer()" @mouseenter="stopTimer()" @mouseleave="startTimer()">
 
             <div class="absolute inset-0 bg-primary-50/30 opacity-20 pointer-events-none transform scale-150 blur-3xl">
             </div>
@@ -50,7 +50,8 @@
 
                                 <div class="flex items-center gap-4 pt-4">
                                     <img src="{{ $post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name) }}"
-                                        class="w-12 h-12 rounded-full ring-4 ring-gray-50 shadow-sm border border-white">
+                                        class="w-12 h-12 rounded-full ring-4 ring-gray-50 shadow-sm border border-white"
+                                        loading="lazy">
                                     <div>
                                         <p class="font-bold text-gray-900">{{ $post->author->name }}</p>
                                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Scholarpeep
@@ -65,7 +66,8 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-60">
                                 </div>
                                 <img src="{{ $post->featured_image_url }}"
-                                    class="w-full h-full object-cover transform group-hover/image:scale-110 transition-transform duration-[1.5s]">
+                                    class="w-full h-full object-cover transform group-hover/image:scale-110 transition-transform duration-[1.5s]"
+                                    loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
 
                                 <div class="absolute bottom-8 right-8 z-20">
                                     <a href="{{ route('blog.show', $post->slug) }}"
@@ -118,19 +120,48 @@
     <!-- Main Content Area -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        <!-- Filter Bar -->
-        <div class="mb-12 overflow-x-auto no-scrollbar pb-2">
-            <div class="flex gap-3">
-                <button wire:click="setCategory(null)"
-                    class="px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ is_null($selectedCategory) ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50' }}">
-                    All Stories
-                </button>
-                @foreach($categories as $category)
-                    <button wire:click="setCategory('{{ $category }}')"
-                        class="px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ $selectedCategory === $category ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50' }}">
-                        {{ $category }}
+        <!-- Search and Filter Bar -->
+        <div class="mb-12 space-y-8">
+            <!-- Search Bar -->
+            <div class="max-w-2xl">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text" wire:model.live.debounce.300ms="search"
+                        placeholder="Search stories, guides, and tips..."
+                        class="block w-full pl-11 pr-4 py-4 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all shadow-sm group-hover:border-gray-300">
+
+                    @if($search)
+                        <button wire:click="$set('search', '')"
+                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Category Filter Bar -->
+            <div class="overflow-x-auto no-scrollbar pb-2">
+                <div class="flex gap-3">
+                    <button wire:click="setCategory(null)"
+                        class="px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ is_null($selectedCategory) ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50' }}">
+                        All Stories
                     </button>
-                @endforeach
+                    @foreach($categories as $category)
+                        <button wire:click="setCategory('{{ $category }}')"
+                            class="px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ $selectedCategory === $category ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50' }}">
+                            {{ $category }}
+                        </button>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -138,14 +169,37 @@
 
             <!-- Left Column: Articles Feed -->
             <div class="lg:col-span-8 space-y-8">
-                @foreach($posts as $post)
-                    <x-blog-card :post="$post" />
-                @endforeach
+                @if($posts->count() > 0)
+                    @foreach($posts as $post)
+                        <x-blog-card :post="$post" />
+                    @endforeach
 
-                <!-- Pagination -->
-                <div class="pt-8">
-                    {{ $posts->links() }}
-                </div>
+                    <!-- Pagination -->
+                    <div class="pt-8">
+                        {{ $posts->links() }}
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div class="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
+                        <div
+                            class="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center text-primary-500 mx-auto mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 2v6h6" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 13h6m-6 4h6" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">No stories found</h3>
+                        <p class="text-gray-500 mb-8 max-w-sm mx-auto">We couldn't find any blog posts matching your search
+                            or filter. Try a different keyword or category.</p>
+                        <button wire:click="$set('search', ''); $set('selectedCategory', null)"
+                            class="px-8 py-3 bg-primary-600 text-white rounded-full font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30">
+                            Clear Search & Filters
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <!-- Right Column: Sidebar -->

@@ -23,6 +23,9 @@ class BlogPostsTable
                     ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean(),
+                TextColumn::make('category')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),
@@ -47,12 +50,15 @@ class BlogPostsTable
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->button()
                     ->color('gray'),
                 EditAction::make()
+                    ->button()
                     ->color('primary'),
                 Preview::make('preview')
                     ->url(fn ($record) => route('blog.show', $record->slug))
                     ->openUrlInNewTab()
+                    ->button()
                     ->icon('heroicon-o-eye')
                     ->color('success'),
             ])

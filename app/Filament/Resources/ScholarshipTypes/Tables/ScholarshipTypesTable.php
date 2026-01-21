@@ -34,7 +34,6 @@ class ScholarshipTypesTable
                     ->color('primary'),
             ])
             ->toolbarActions([
-                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

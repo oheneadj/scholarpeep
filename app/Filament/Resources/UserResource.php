@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas;
-use Filament\Schemas\Schema;
-use App\Enums\UserRole;
-use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Tables;
+use Filament\Actions;
+use Filament\Schemas;
+use App\Enums\UserRole;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Actions;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Filament\Schemas\Components\Section;
+use App\Filament\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {
@@ -27,13 +28,31 @@ class UserResource extends Resource
     {
         return $schema
             ->components([
-                Components\TextInput::make('name')
+                Section::make()
+                ->schema([
+                     Components\FileUpload::make('avatar')
+                    ->image()
+                    ->disk('public')
+                    ->directory('avatars')
+                    ->visibility('public')
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper(),
+                    Components\TextInput::make('name')
                     ->required()
+                    ->placeholder('e.g. John Doe')
                     ->maxLength(255),
                 Components\TextInput::make('email')
                     ->email()
+                    ->placeholder('e.g. johndoe@example.com')
                     ->required()
                     ->maxLength(255),
+               
+                Components\Textarea::make('bio')
+                    ->maxLength(100)
+                    ->placeholder('e.g. I am a student')
+                    ->rows(3)
+                    ->helperText('Brief bio (max 100 characters)'),
                 Components\Select::make('role')
                     ->options(UserRole::class)
                     ->required()
@@ -45,7 +64,9 @@ class UserResource extends Resource
                     ->default(true)
                     ->disabled(fn ($record) => $record?->role === UserRole::SUPER_ADMIN)
                     ->helperText(fn ($record) => $record?->role === UserRole::SUPER_ADMIN ? 'Super Admin cannot be disabled' : null),
-            ]);
+            
+                ])
+                ]);
     }
 
     public static function table(Table $table): Table
@@ -72,8 +93,14 @@ class UserResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_active'),
             ])
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()
+                ->label('Edit')
+                ->icon('heroicon-o-pencil')
+                ->button(),
                 Actions\Action::make('reset_password')
+                    ->label('Reset Password')
+                    ->button()
+                    ->color('success')
                     ->icon('heroicon-o-key')
                     ->requiresConfirmation()
                     ->action(function (User $record) {
@@ -92,6 +119,7 @@ class UserResource extends Resource
                             ->send();
                     }),
                 Actions\DeleteAction::make()
+                ->label('Delete')->button()
                     ->hidden(fn (User $record) => $record->role === UserRole::SUPER_ADMIN),
             ])
             ->bulkActions([

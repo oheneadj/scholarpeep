@@ -10,9 +10,7 @@ class FieldOfStudyForm
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Section::make()
-                    ->schema([
-                        \Filament\Forms\Components\TextInput::make('name')
+                \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
                             ->placeholder('e.g. Computer Science')
@@ -28,7 +26,7 @@ class FieldOfStudyForm
                             ->searchable()
                             ->placeholder('Select Parent Category')
                             ->preload(),
-                    ]),
+                    
             ]);
     }
 }

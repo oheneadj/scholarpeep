@@ -9,8 +9,8 @@
                 <div class="flex gap-5 items-center">
                     <div
                         class="w-14 h-14 rounded-2xl overflow-hidden shrink-0 shadow-inner border border-gray-50 group-hover:scale-110 transition-transform">
-                        <img src="{{ $featured->provider_logo ?? 'https://ui-avatars.com/api/?name=' . urlencode($featured->provider_name) }}"
-                            class="w-full h-full object-cover" alt="{{ $featured->provider_name }}">
+                        <img src="{{ $featured->provider_logo_url }}" class="w-full h-full object-cover"
+                            alt="{{ $featured->provider_name }}" loading="lazy">
                     </div>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 mb-1.5">

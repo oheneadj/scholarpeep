@@ -39,6 +39,7 @@ class SuccessStoryForm
                             ->columnSpanFull(),
                         \Filament\Forms\Components\FileUpload::make('student_photo')
                             ->image()
+                            ->disk('public')
                             ->directory('success-stories'),
                         \Filament\Forms\Components\Toggle::make('is_approved')
                             ->label('Approved')

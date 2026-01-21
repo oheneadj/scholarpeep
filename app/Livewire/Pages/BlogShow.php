@@ -52,6 +52,7 @@ class BlogShow extends Component
 
         // Featured Posts for Sidebar Slider
         $featuredPosts = BlogPost::published()
+            ->with('author')
             ->where('is_featured', true)
             ->where('id', '!=', $this->post->id)
             ->latest()

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Faqs\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
@@ -24,9 +25,11 @@ class FaqsTable
                     ->searchable()
                     ->sortable()
                     ->badge(),
-                ToggleColumn::make('is_published'),
+                ToggleColumn::make('is_published')
+                    ->label('Published'),
                 TextColumn::make('sort_order')
                     ->numeric()
+                    ->label('Sort Order')
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->dateTime()
@@ -38,7 +41,13 @@ class FaqsTable
             ])
             ->recordActions([
                 EditAction::make()
+                    ->button()
+                    ->icon('heroicon-o-pencil')
                     ->color('primary'),
+                DeleteAction::make()
+                    ->button()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

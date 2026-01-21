@@ -19,7 +19,22 @@ class ScholarshipForm
                                     ->placeholder('e.g. Gates Cambridge Scholarship')
                                     ->maxLength(255)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                                    ->afterStateUpdated(function ($state, callable $set, $record) {
+                                        $slug = \Illuminate\Support\Str::slug($state);
+                                        $originalSlug = $slug;
+                                        $counter = 1;
+                                        
+                                        // Check if slug exists and increment until unique
+                                        while (\App\Models\Scholarship::where('slug', $slug)
+                                            ->when($record, fn($query) => $query->where('id', '!=', $record->id))
+                                            ->exists()) {
+                                            $slug = $originalSlug . '-' . $counter;
+                                            $counter++;
+                                        }
+                                        
+                                        $set('slug', $slug);
+                                        $set('meta_title', \Illuminate\Support\Str::limit($state, 60));
+                                    }),
                                 \Filament\Forms\Components\TextInput::make('slug')
                                     ->required()
                                     ->placeholder('e.g. gates-cambridge-scholarship')
@@ -31,16 +46,28 @@ class ScholarshipForm
                                     ->maxLength(255),
                                 \Filament\Forms\Components\FileUpload::make('provider_logo')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('provider-logos'),
                                 \Filament\Forms\Components\FileUpload::make('featured_image')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('scholarship-images')
                                     ->label('Featured Image')
                                     ->helperText('Upload a featured image for this scholarship (recommended: 1200x600px)'),
                                 \Filament\Forms\Components\RichEditor::make('description')
                                     ->required()
                                     ->placeholder('Detailed description of the scholarship...')
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state) {
+                                            // Strip HTML tags and get plain text
+                                            $plainText = strip_tags($state);
+                                            // Generate meta description (first 160 characters)
+                                            $metaDescription = \Illuminate\Support\Str::limit($plainText, 160);
+                                            $set('meta_description', $metaDescription);
+                                        }
+                                    }),
                                 \Filament\Forms\Components\RichEditor::make('eligibility_criteria')
                                     ->required()
                                     ->placeholder('e.g. Must be a citizen of...')
@@ -145,10 +172,12 @@ class ScholarshipForm
                             ->schema([
                                 \Filament\Forms\Components\TextInput::make('meta_title')
                                     ->maxLength(60)
-                                    ->hint(fn($state) => strlen($state) . '/60 chars'),
+                                    ->hint(fn($state) => strlen($state) . '/60 chars')
+                                    ->helperText('Auto-generated from title. You can edit if needed.'),
                                 \Filament\Forms\Components\Textarea::make('meta_description')
                                     ->maxLength(160)
-                                    ->hint(fn($state) => strlen($state) . '/160 chars'),
+                                    ->hint(fn($state) => strlen($state) . '/160 chars')
+                                    ->helperText('Auto-generated from description. You can edit if needed.'),
                             ]),
                     ]),
             ])->columns(1);

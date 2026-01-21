@@ -40,6 +40,10 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::createUsersUsing(CreateNewUser::class);
         
         Fortify::authenticateUsing(function (Request $request) {
+            $request->validate([
+                'cf-turnstile-response' => ['required', 'string', new \App\Rules\Turnstile],
+            ]);
+
             $user = \App\Models\User::where('email', $request->email)->first();
     
             if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {

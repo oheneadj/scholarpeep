@@ -22,8 +22,8 @@
                         class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group">
                         <div
                             class="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm">
-                            <img src="{{ $scholarship->provider_logo ?? 'https://ui-avatars.com/api/?name=' . urlencode($scholarship->provider_name) }}"
-                                class="w-full h-full object-cover">
+                            <img src="{{ $scholarship->provider_logo_url }}" class="w-full h-full object-cover"
+                                alt="{{ $scholarship->provider_name }}" loading="lazy">
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-bold text-gray-900 truncate group-hover:text-primary-600 transition-colors">

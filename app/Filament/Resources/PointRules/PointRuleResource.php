@@ -31,8 +31,11 @@ class PointRuleResource extends Resource
         return $schema
             ->components([
                 TextInput::make('action_type')
+                    ->label('Action Type')
+                    ->readOnly()
                     ->required(),
                 TextInput::make('points')
+                    ->label('Points')
                     ->required()
                     ->numeric(),
                 TextInput::make('description')
@@ -74,8 +77,14 @@ class PointRuleResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                ->button()
+                ->icon('heroicon-o-pencil')
+                ->color('primary'),
+                DeleteAction::make()
+                ->button()
+                ->icon('heroicon-o-trash')
+                ->color('danger'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

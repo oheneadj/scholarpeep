@@ -64,12 +64,15 @@ class ScholarshipsTable
             ])
             ->recordActions([
                 ViewAction::make()
+                ->button()
                     ->color('gray'),
                 EditAction::make()
+                ->button()
                     ->color('primary'),
                 Preview::make('preview')
                     ->url(fn ($record) => route('scholarships.show', $record->slug))
                     ->openUrlInNewTab()
+                    ->button()
                     ->icon('heroicon-o-eye')
                     ->color('success'),
             ])

@@ -14,6 +14,8 @@ class FaqForm
     {
         return $schema
             ->components([
+                  Section::make('Settings')
+                    ->schema([
                 TextInput::make('question')
                     ->required()
                     ->maxLength(255)
@@ -23,18 +25,20 @@ class FaqForm
                     ->required()
                     ->placeholder('Provide a detailed answer here...')
                     ->columnSpanFull(),
-                Section::make('Settings')
-                    ->schema([
                         TextInput::make('category')
+                            ->label('Category')
                             ->placeholder('e.g., General, Billing'),
                         TextInput::make('sort_order')
                             ->numeric()
+                            ->label('Sort Order')
+                            ->helperText('The order in which the FAQ will be displayed.')
                             ->default(0)
                             ->placeholder('0'),
                         Toggle::make('is_published')
+                            ->label('Published')
                             ->default(true)
                             ->inline(false),
-                    ])->columns(3),
+                    ])->columns(2),
             ]);
     }
 }

@@ -42,12 +42,12 @@ class Ad extends Model
             'referrer' => request()->header('referer'),
         ]);
 
-        $this->increment('clicks_count');
+        $this->increment('clicks_count', 1);
     }
 
     public function trackImpression(): void
     {
-        $this->increment('impressions_count');
+        $this->increment('impressions_count', 1);
     }
 
     public function scopeActive($query)
@@ -66,5 +66,16 @@ class Ad extends Model
     public function scopePosition($query, \App\Enums\AdPosition $position)
     {
         return $query->where('position', $position);
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image) {
+            return \Illuminate\Support\Str::contains($this->image, 'http')
+                ? $this->image
+                : \Illuminate\Support\Facades\Storage::disk('public')->url($this->image);
+        }
+
+        return 'https://via.placeholder.com/1920x1080?text=Scholarpeep+Ad';
     }
 }

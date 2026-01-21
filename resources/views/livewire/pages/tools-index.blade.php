@@ -29,7 +29,7 @@
                         class="w-14 h-14 rounded-xl bg-{{ $color }}-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         @if($tool->icon && (str_contains($tool->icon, '/') || str_contains($tool->icon, '.')))
                             <img src="{{ asset('storage/' . $tool->icon) }}" alt="{{ $tool->name }}"
-                                class="w-8 h-8 object-contain">
+                                class="w-8 h-8 object-contain" loading="lazy">
                         @elseif($tool->icon === 'calculator')
                             <svg class="w-7 h-7 text-{{ $color }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

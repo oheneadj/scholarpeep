@@ -14,9 +14,9 @@
 
     <div class="flex items-center gap-4 border-t border-gray-50 pt-6 mt-2">
         <div class="relative w-10 h-10 flex-shrink-0">
-            <img src="{{ Str::contains($story->student_photo, 'http') ? $story->student_photo : \Illuminate\Support\Facades\Storage::url($story->student_photo) }}"
-                alt="{{ $story->student_name }}"
-                class="w-full h-full rounded-full object-cover border-2 border-white shadow-sm group-hover:border-primary-100 transition-colors">
+            <img src="{{ $story->photo_url }}" alt="{{ $story->student_name }}"
+                class="w-full h-full rounded-full object-cover border-2 border-white shadow-sm group-hover:border-primary-100 transition-colors"
+                loading="lazy">
             <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
                 @php
                     $iso = Str::lower(\App\Models\Country::where('name', '=', $story->country, 'and')->first()?->iso_alpha2 ?? 'us');

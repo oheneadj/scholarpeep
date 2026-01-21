@@ -1,30 +1,30 @@
 @section('meta')
     <script type="application/ld+json">
-            {
-              "@@context": "https://schema.org",
-              "@@type": "BlogPosting",
-              "headline": "{{ $post->title }}",
-              "description": "{{ Str::limit(strip_tags($post->excerpt), 160) }}",
-              "image": "{{ $post->featured_image_url }}",
-              "author": {
-                "@@type": "Person",
-                "name": "{{ $post->author->name }}"
-              },
-              "publisher": {
-                "@@type": "Organization",
-                "name": "Scholarpeep",
-                "logo": {
-                  "@@type": "ImageObject",
-                  "url": "{{ asset('img/logo.png') }}"
-                }
-              },
-              "datePublished": "{{ $post->published_at }}",
-              "mainEntityOfPage": {
-                "@@type": "WebPage",
-                "@@id": "{{ route('blog.show', $post->slug) }}"
-              }
-            }
-            </script>
+                                                                                                                {
+                                                                                                                  "@@context": "https://schema.org",
+                                                                                                                  "@@type": "BlogPosting",
+                                                                                                                  "headline": "{{ $post->title }}",
+                                                                                                                  "description": "{{ Str::limit(strip_tags($post->excerpt), 160) }}",
+                                                                                                                  "image": "{{ $post->featured_image_url }}",
+                                                                                                                  "author": {
+                                                                                                                    "@@type": "Person",
+                                                                                                                    "name": "{{ $post->author->name }}"
+                                                                                                                  },
+                                                                                                                  "publisher": {
+                                                                                                                    "@@type": "Organization",
+                                                                                                                    "name": "Scholarpeep",
+                                                                                                                    "logo": {
+                                                                                                                      "@@type": "ImageObject",
+                                                                                                                      "url": "{{ asset('img/logo.png') }}"
+                                                                                                                    }
+                                                                                                                  },
+                                                                                                                  "datePublished": "{{ $post->published_at }}",
+                                                                                                                  "mainEntityOfPage": {
+                                                                                                                    "@@type": "WebPage",
+                                                                                                                    "@@id": "{{ route('blog.show', $post->slug) }}"
+                                                                                                                  }
+                                                                                                                }
+                                                                                                                </script>
 @endsection
 
 <div class="bg-white min-h-screen font-sans text-gray-900" x-data="{ 
@@ -65,7 +65,7 @@
 
                 <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
                     <img src="{{ $post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name) }}"
-                        class="w-12 h-12 rounded-full ring-4 ring-gray-50 object-cover">
+                        alt="{{ $post->author->name }}" class="w-12 h-12 rounded-full ring-4 ring-gray-50 object-cover">
                     <div>
                         <p class="font-bold text-gray-900 text-base">{{ $post->author->name }}</p>
                         <div class="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -149,7 +149,7 @@
             <div class="lg:col-span-7">
                 <div
                     class="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border border-gray-100 group">
-                    <img src="{{ $post->featured_image_url }}"
+                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
                         class="relative w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                 </div>
             </div>
@@ -174,7 +174,11 @@
                         </p>
                     </div>
 
-                    {!! $post->content !!}
+
+
+                    {!! $post->renderRichContent('content') !!}
+
+
 
                     <!-- App-like Promo Block (Example) -->
                     <div
@@ -219,8 +223,9 @@
                                     <div
                                         class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/10 transition-colors z-10">
                                     </div>
-                                    <img src="{{ Str::contains($related->featured_image, 'http') ? $related->featured_image : \Illuminate\Support\Facades\Storage::url($related->featured_image) }}"
-                                        class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                                    <img src="{{ $related->featured_image_url }}" alt="{{ $related->title }}"
+                                        class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                        loading="lazy">
                                 </div>
                                 <div class="space-y-2">
                                     <div
@@ -252,8 +257,7 @@
             <aside class="lg:col-span-4 space-y-12">
 
                 <!-- Author Widget -->
-                <x-widgets.author-widget :name="$post->author->name" role="Senior Editor" :bio="'Passionate about democratizing education access. finding the best funding opportunities for students worldwide.'"
-                    :avatar="$post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name)" title="About" location="New York, NY" :socials="[
+                <x-widgets.author-widget :name="$post->author->name" role="Senior Editor" :bio="$post->author->bio ?? 'Passionate about democratizing education access and finding the best funding opportunities for students worldwide.'" :avatar="$post->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($post->author->name)" title="About" location="New York, NY" :socials="[
         'x' => '#',
         'facebook' => '#',
         'instagram' => '#',

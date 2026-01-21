@@ -10,8 +10,7 @@ class ScholarshipTypeForm
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Section::make()
-                    ->schema([
+              
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
@@ -23,7 +22,7 @@ class ScholarshipTypeForm
                             ->maxLength(255)
                             ->placeholder('e.g. full-scholarship')
                             ->unique(ignoreRecord: true),
-                    ]),
+                    
             ]);
     }
 }

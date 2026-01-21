@@ -30,6 +30,7 @@ class EducationLevelsTable
             ])
             ->recordActions([
                 EditAction::make()
+                    ->button()
                     ->modalWidth('md')
                     ->color('primary'),
             ])

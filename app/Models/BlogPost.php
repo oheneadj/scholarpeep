@@ -6,9 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BlogPost extends Model
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+
+class BlogPost extends Model implements HasRichContent
 {
     use HasFactory;
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->customBlocks([
+                \App\Filament\Forms\Components\RichEditor\RichContentCustomBlocks\VideoEmbedBlock::class,
+                \App\Filament\Forms\Components\RichEditor\RichContentCustomBlocks\InTextAdBlock::class,
+            ]);
+    }
 
     protected $fillable = [
         'title',
@@ -23,6 +36,7 @@ class BlogPost extends Model
         'meta_description',
         'is_featured',
         'views_count',
+        'category',
     ];
 
     protected $casts = [
@@ -48,7 +62,7 @@ class BlogPost extends Model
         if ($this->featured_image) {
             return \Illuminate\Support\Str::contains($this->featured_image, 'http')
                 ? $this->featured_image
-                : \Illuminate\Support\Facades\Storage::url($this->featured_image);
+                : \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->title) . '&color=3b82f6&background=eff6ff';

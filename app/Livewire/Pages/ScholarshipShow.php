@@ -138,6 +138,7 @@ class ScholarshipShow extends Component
         $this->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
+            'cf-turnstile-response' => ['required', 'string', new \App\Rules\Turnstile],
         ]);
 
         $this->scholarship->reviews()->create([
@@ -294,13 +295,15 @@ class ScholarshipShow extends Component
             ->take(3)
             ->get();
 
-        $featuredPosts = \App\Models\BlogPost::where('status', 'published')
+        $featuredPosts = \App\Models\BlogPost::published()
+            ->with('author')
             ->where('is_featured', true)
             ->latest()
             ->take(5)
             ->get();
 
         $popularPosts = \App\Models\BlogPost::published()
+            ->with('author')
             ->orderBy('views_count', 'desc')
             ->take(4)
             ->get();
